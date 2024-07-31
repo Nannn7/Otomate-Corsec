@@ -4,11 +4,11 @@
 	id="sidebar">
 	<div class="sidebar-header hidden lg:flex items-center relative justify-between px-3 lg:px-6 shrink-0"
 		id="sidebar_header">
-		<a class="dark:hidden" href="{{ route('/') }}">
+		<a class="dark:hidden" href="{{ url('/') }}">
 			<img class="default-logo min-h-[22px] max-w-none" style="height: 53.55px;" src="assets/media/app/logo-agi-croped.png" />
 			<img class="small-logo min-h-[22px] max-w-none" style="height: 50px" src="assets/media/app/logo-agi-mini.png" />
 		</a>
-		<a class="hidden dark:block" href="{{ route('/') }}">
+		<a class="light:hidden dark:flex" href="{{ url('/') }}">
 			<img class="default-logo min-h-[22px] max-w-none" style="height: 53.55px;" src="assets/media/app/logo-agi-croped.png" />
 			<img class="small-logo min-h-[22px] max-w-none" style="height: 50px" src="assets/media/app/logo-agi-mini.png" />
 		</a>

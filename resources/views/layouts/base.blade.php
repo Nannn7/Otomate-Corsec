@@ -1,4 +1,5 @@
-<!doctype html>
+@php use Nwidart\Modules\Module; @endphp
+    <!doctype html>
 <html class="h-full" data-theme="true" data-theme-mode="light" lang="en">
 
 <head>
@@ -7,36 +8,34 @@
     <base href="/">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-    @vite('resources/css/app.scss')
+    @vite(Module::getAssets())
 </head>
 
 <body class="flex h-full metronic sidebar-fixed header-fixed bg-[#fefefe] dark:bg-coal-500">
-    <!--begin::Theme mode setup on page load-->
-    <script>
-        const defaultThemeMode = 'dark'; // light|dark|system
-        let themeMode;
+<!--begin::Theme mode setup on page load-->
+<script>
+    const defaultThemeMode = 'dark'; // light|dark|system
+    let themeMode;
 
-        if (document.documentElement) {
-            if (localStorage.getItem('theme')) {
-                themeMode = localStorage.getItem('theme');
-            } else if (document.documentElement.hasAttribute('data-theme-mode')) {
-                themeMode = document.documentElement.getAttribute('data-theme-mode');
-            } else {
-                themeMode = defaultThemeMode;
-            }
-
-            if (themeMode === 'system') {
-                themeMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-            }
-
-            document.documentElement.classList.add(themeMode);
+    if (document.documentElement) {
+        if (localStorage.getItem('theme')) {
+            themeMode = localStorage.getItem('theme');
+        } else if (document.documentElement.hasAttribute('data-theme-mode')) {
+            themeMode = document.documentElement.getAttribute('data-theme-mode');
+        } else {
+            themeMode = defaultThemeMode;
         }
-    </script>
-    <!--end::Theme mode setup on page load-->
 
-		@yield('main')
+        if (themeMode === 'system') {ß
+            themeMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
 
-    @vite('resources/js/app.js')
+        document.documentElement.classList.add(themeMode);
+    }
+</script>
+<!--end::Theme mode setup on page load-->
+
+@yield('main')
 </body>
 
 </html>

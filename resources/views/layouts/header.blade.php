@@ -4,7 +4,7 @@
 	<!-- begin: container -->
 	<div class="container-fixed flex justify-between items-stretch lg:gap-4" id="header_container">
 		<div class="flex gap-1 lg:hidden items-center -ml-1">
-			<a class="shrink-0" href="{{ route('/') }}">
+			<a class="shrink-0" href="{{ url('/') }}">
 				<img class="max-h-[25px] w-full" src="assets/media/app/logo-agi-mini.png" />
 			</a>
 			<div class="flex items-center">
