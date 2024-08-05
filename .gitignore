@@ -21,3 +21,5 @@ yarn-error.log
 
 /public/assets/media
 /resources/metronic
+*.lock
+package-lock.json
