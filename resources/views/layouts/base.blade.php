@@ -1,4 +1,6 @@
-@php use Nwidart\Modules\Module; @endphp
+@php
+    use Nwidart\Modules\Module;
+@endphp
     <!doctype html>
 <html class="h-full" data-theme="true" data-theme-mode="light" lang="en">
 
@@ -8,7 +10,7 @@
     <base href="/">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-    @vite(Module::getAssets())
+    @vite('resources/css/app.scss')
 </head>
 
 <body class="flex h-full metronic sidebar-fixed header-fixed bg-[#fefefe] dark:bg-coal-500">
@@ -26,7 +28,8 @@
             themeMode = defaultThemeMode;
         }
 
-        if (themeMode === 'system') {ß
+        if (themeMode === 'system') {
+            ß
             themeMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         }
 
@@ -36,6 +39,8 @@
 <!--end::Theme mode setup on page load-->
 
 @yield('main')
+@vite('resources/js/app.js')
+@stack('scripts')
 </body>
 
 </html>
