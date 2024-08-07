@@ -6,6 +6,11 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "daengdeni/authentication-module": "dev-master",
+        "daengdeni/location-module": "dev-master",
+        "daengdeni/logs-module": "dev-master",
+        "daengdeni/lpj-module": "dev-master",
+        "daengdeni/usermanagement-module": "dev-master",
         "diglactic/laravel-breadcrumbs": "^9.0",
         "joshbrw/laravel-module-installer": "^2.0",
         "laravel/framework": "^11.9",
@@ -59,6 +64,7 @@
         "laravel": {
             "dont-discover": []
         },
+        "module-dir": "Modules",
         "merge-plugin": {
             "include": [
                 "Modules/*/composer.json"
