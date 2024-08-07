@@ -82,7 +82,7 @@
         {
             "name": "daengdeni/logs-module",
             "type": "vcs",
-            "url": "https://git.putrakuningan.com/usermanagement/logs"
+            "url": "https://git.putrakuningan.com/daengdeni/logs"
         },
         {
             "name": "daengdeni/usermanagement-module",
