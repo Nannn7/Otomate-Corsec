@@ -19,7 +19,7 @@ yarn-error.log
 /.idea
 /.vscode
 
-/public/assets/media
+/public/assets
 *.lock
 package-lock.json
 Modules
