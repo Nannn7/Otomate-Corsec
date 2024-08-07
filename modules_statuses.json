@@ -1,0 +1,6 @@
+{
+    "Location": true,
+    "Usermanagement": true,
+    "Logs": true,
+    "Authentication": true
+}

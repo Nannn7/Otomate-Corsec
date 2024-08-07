@@ -20,6 +20,5 @@ yarn-error.log
 /.vscode
 
 /public/assets/media
-/resources/metronic
 *.lock
 package-lock.json

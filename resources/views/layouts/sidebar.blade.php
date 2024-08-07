@@ -51,36 +51,35 @@
                                 $menus = $module->menu;
                             @endphp
                             @foreach($menus as $key => $value)
-                                @if($key=='main')
-                                    @if($headingMain == 0)
-                                        <div class="menu-item pt-2.25 pb-px">
-                                            <span class="menu-heading uppercase text-2sm font-semibold text-gray-500 pl-[10px] pr-[10px]">
-                                                Apps
-                                            </span>
-                                        </div>
-                                        @php $headingMain = 1; @endphp
-                                    @endif
-                                @elseif($key=='master')
-                                    @if($headingMaster == 0)
-                                        <div class="menu-item pt-2.25 pb-px">
-                                            <span class="menu-heading uppercase text-2sm font-semibold text-gray-500 pl-[10px] pr-[10px]">
-                                                Master Data
-                                            </span>
-                                        </div>
-                                        @php $headingMaster = 1; @endphp
-                                    @endif
-                                @elseif($key=='system')
-                                    @if($headingSystem == 0)
-                                        <div class="menu-item pt-2.25 pb-px">
-                                            <span class="menu-heading uppercase text-2sm font-semibold text-gray-500 pl-[10px] pr-[10px]">
-                                                Systems
-                                            </span>
-                                        </div>
-                                        @php $headingSystem = 1; @endphp
-                                    @endif
-                                @endif
-
                                 @foreach($value as $menu)
+                                    @if($key=='main')
+                                        @if($headingMain == 0)
+                                            <div class="menu-item pt-2.25 pb-px">
+                                                <span class="menu-heading uppercase text-2sm font-semibold text-gray-500 pl-[10px] pr-[10px]">
+                                                    Apps
+                                                </span>
+                                            </div>
+                                            @php $headingMain = 1; @endphp
+                                        @endif
+                                    @elseif($key=='master')
+                                        @if($headingMaster == 0)
+                                            <div class="menu-item pt-2.25 pb-px">
+                                                <span class="menu-heading uppercase text-2sm font-semibold text-gray-500 pl-[10px] pr-[10px]">
+                                                    Master Data
+                                                </span>
+                                            </div>
+                                            @php $headingMaster = 1; @endphp
+                                        @endif
+                                    @elseif($key=='system')
+                                        @if($headingSystem == 0)
+                                            <div class="menu-item pt-2.25 pb-px">
+                                                <span class="menu-heading uppercase text-2sm font-semibold text-gray-500 pl-[10px] pr-[10px]">
+                                                    Systems
+                                                </span>
+                                            </div>
+                                            @php $headingSystem = 1; @endphp
+                                        @endif
+                                    @endif
                                     @if(is_array($menu->sub))
                                         <div class="menu-item {{ request()->routeIs($menu->path) || request()->routeIs($menu->path.'.*') ? 'show' : '' }}" data-menu-item-toggle="accordion" data-menu-item-trigger="click">
                                             <div
