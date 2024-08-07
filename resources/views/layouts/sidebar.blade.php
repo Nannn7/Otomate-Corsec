@@ -80,7 +80,7 @@
                                             @php $headingSystem = 1; @endphp
                                         @endif
                                     @endif
-                                    @if(is_array($menu->sub))
+                                    @if(isset($menu->sub))
                                         <div class="menu-item {{ request()->routeIs($menu->path) || request()->routeIs($menu->path.'.*') ? 'show' : '' }}" data-menu-item-toggle="accordion" data-menu-item-trigger="click">
                                             <div
                                                 class="menu-link flex items-center grow cursor-pointer border border-transparent gap-[10px] pl-[10px] pr-[10px] py-[6px]"
@@ -122,7 +122,7 @@
                                         <div class="menu-item {{ request()->routeIs($menu->path.'.*') ? 'active' : '' }}">
                                             <a class="menu-link flex items-center grow cursor-pointer border border-transparent gap-[10px] pl-[10px] pr-[10px] py-[6px]" href="{{ $menu->path ? route($menu->path.'.index') : '' }}">
                                                 <span class="menu-icon items-start text-gray-500 dark:text-gray-400 w-[20px]">
-                                                    <i class="ki-filled ki-badge text-lg"></i>
+                                                    <i class="{{ $menu->icon ?? 'ki-filled ki-element-11 text-lg' }}"></i>
                                                 </span>
                                                 <span class="menu-title text-sm font-semibold text-gray-700 menu-item-active:text-primary menu-link-hover:!text-primary">
                                                     {{ $menu->title }}
