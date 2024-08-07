@@ -11,6 +11,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     @vite('resources/css/app.scss')
+    @stack('styles')
 </head>
 
 <body class="flex h-full metronic sidebar-fixed header-fixed bg-[#fefefe] dark:bg-coal-500">
