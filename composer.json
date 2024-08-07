@@ -77,5 +77,32 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": [
+        {
+            "name": "daengdeni/logs-module",
+            "type": "vcs",
+            "url": "https://git.putrakuningan.com/usermanagement/logs"
+        },
+        {
+            "name": "daengdeni/usermanagement-module",
+            "type": "vcs",
+            "url": "https://git.putrakuningan.com/daengdeni/usermanagement"
+        },
+        {
+            "name": "daengdeni/authentication-module",
+            "type": "vcs",
+            "url": "https://git.putrakuningan.com/daengdeni/authentication"
+        },
+        {
+            "name": "daengdeni/lpj-module",
+            "type": "vcs",
+            "url": "https://git.putrakuningan.com/daengdeni/lpj"
+        },
+        {
+            "name": "daengdeni/location-module",
+            "type": "vcs",
+            "url": "https://git.putrakuningan.com/daengdeni/location"
+        }
+    ]
 }
