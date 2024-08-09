@@ -4,5 +4,14 @@ import "../metronic/core/index";
 import "../metronic/app/layouts/base.js";
 
 import $ from 'jquery';
+window.jQuery = $;
 window.$ = $;
-let dataTable;
+
+import TomSelect from "tom-select";
+
+document.querySelectorAll('.tomselect').forEach((el)=>{
+    let settings = {
+        plugins: ['dropdown_input']
+    };
+    new TomSelect(el,settings);
+});

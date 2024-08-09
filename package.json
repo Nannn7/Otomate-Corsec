@@ -19,6 +19,7 @@
         "@popperjs/core": "^2.11.8",
         "jquery": "^3.7.1",
         "mini-svg-data-uri": "^1.4.4",
-        "sweetalert2": "^11.12.4"
+        "sweetalert2": "^11.12.4",
+        "tom-select": "^2.3.1"
     }
 }
