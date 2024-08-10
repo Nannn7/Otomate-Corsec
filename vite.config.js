@@ -8,6 +8,8 @@ const allPaths = [
     'resources/js/app.js',
 ];
 
+const paths = await collectModuleAssetsPaths(allPaths,'Modules');
+
 export default defineConfig({
     build: {
         sourcemap: true,
@@ -24,7 +26,7 @@ export default defineConfig({
             jQuery: 'jquery',
         }),
         laravel({
-            input: allPaths,
+            input: paths,
             refresh: true
         }),
     ],

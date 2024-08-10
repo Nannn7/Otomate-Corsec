@@ -10,7 +10,7 @@
     <base href="/">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-    @vite('resources/css/app.scss')
+    @vite(Module::getAssets())
     @stack('styles')
 </head>
 
@@ -40,7 +40,6 @@
 <!--end::Theme mode setup on page load-->
 
 @yield('main')
-@vite('resources/js/app.js')
 @stack('scripts')
 </body>
 
