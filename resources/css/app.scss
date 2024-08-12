@@ -30,6 +30,7 @@
 .full .ts-control {
     background-color: #fff;
 }
+
 .disabled .ts-control, .disabled .ts-control * {
     cursor: default !important;
 }
@@ -392,6 +393,25 @@
 .ts-wrapper.single.input-active .ts-control {
     background: #fff;
     cursor: text;
+}
+
+.dark {
+    .ts-control,
+    .ts-wrapper.single.input-active .ts-control {
+        background: #1f212a;
+        color: #9A9CAE;
+    }
+
+    .ts-dropdown {
+        background: #1f212a;
+        color: #9A9CAE;
+        border-color: #9A9CAE;
+    }
+
+    .ts-dropdown .active{
+        background: #9A9CAE;
+        color: #1f212a;
+    }
 }
 
 .ts-hidden-accessible {
