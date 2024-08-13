@@ -7,3 +7,14 @@ import $ from 'jquery';
 
 window.jQuery = $;
 window.$ = $;
+
+
+import TomSelect from "tom-select";
+
+let settings = {
+    plugins: ['dropdown_input'],
+    create: false,
+    createOnBlur: true
+};
+
+new TomSelect('.tomselect', settings);
