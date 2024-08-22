@@ -19,3 +19,19 @@ document.querySelectorAll(".tomselect").forEach((el) => {
 
     new TomSelect(el, settings);
 });
+
+import toast from "toastr";
+import "toastr/build/toastr.css";
+
+document.querySelectorAll(".toastr").forEach((el) => {
+    toast.options = {
+        closeButton: true,
+        timeOut: 5000,
+        showMethod: "slideDown",
+        closeMethod: "slideUp",
+        preventDuplication: true,
+        newestOnTop: true,
+        closeDuration: 300,
+    };
+    toast[el.dataset.type](el.dataset.message);
+});

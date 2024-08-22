@@ -15,6 +15,20 @@
 </head>
 
 <body class="flex h-full metronic sidebar-fixed header-fixed bg-[#fefefe] dark:bg-coal-500">
+
+@if (session('error'))
+    <em class="hidden toastr" data-type="error" data-message=" {{ session('status') }}"></em>
+@endif
+
+@if (session('info'))
+    <em class="hidden toastr" data-type="info" data-message=" {{ session('info') }}"></em>
+@endif
+
+@if (session('success'))
+    <em class="hidden toastr" data-type="success" data-message=" {{ session('success') }}"></em>
+@endif
+
+
 <!--begin::Theme mode setup on page load-->
 <script>
     const defaultThemeMode = 'dark'; // light|dark|system
@@ -41,6 +55,8 @@
 
 @yield('main')
 @stack('scripts')
+
+
 </body>
 
 </html>
