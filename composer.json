@@ -7,6 +7,7 @@
     "require": {
         "php": "^8.2",
         "daengdeni/authentication-module": "dev-master",
+        "daengdeni/laravel-id-generator": "^1.0",
         "daengdeni/location-module": "dev-master",
         "daengdeni/logs-module": "dev-master",
         "daengdeni/lpj-module": "dev-master",
