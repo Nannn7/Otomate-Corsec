@@ -1295,23 +1295,22 @@
                         <img alt="" class="size-9 rounded-full border-2 border-success shrink-0"
                              src="assets/media/avatars/300-2.png"/>
                     </div>
-                    <div class="menu-dropdown menu-default light:border-gray-300 w-full max-w-[250px]">
-                        <div class="flex items-center justify-between px-5 py-1.5 gap-1.5">
-                            <div class="flex items-center gap-2">
+                    <div class="menu-dropdown menu-default light:border-gray-300 w-full max-w-[350px]">
+                        <div class="flex items-start justify-between px-5 py-1.5 gap-1.5">
+                            <div class="flex items-start gap-2">
                                 <img alt="" class="size-9 rounded-full border-2 border-success" src="assets/media/avatars/300-2.png"/>
                                 <div class="flex flex-col gap-1.5">
 									<span class="text-sm text-gray-800 font-semibold leading-none">
-										Cody Fisher
+										{{ Auth::user()->name }}
 									</span>
-                                    <a class="text-xs text-gray-600 hover:text-primary font-medium leading-none"
-                                       href="html/demo1/account/home/get-started.html">
-                                        c.fisher&#64;gmail.com
-                                    </a>
+                                    <span class="text-xs text-gray-600 hover:text-primary font-medium leading-none">
+                                        {{ Auth::user()->nik ?? "" }} | {{ Auth::user()->branch->name ?? "" }}
+                                    </span>
                                 </div>
                             </div>
                             <span class="badge badge-xs badge-primary badge-outline">
-								Pro
-							</span>
+                                {{ Auth::user()->roles[0]->name?? "" }}
+                            </span>
                         </div>
                         <div class="menu-separator">
                         </div>
