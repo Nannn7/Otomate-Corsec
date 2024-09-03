@@ -14,7 +14,7 @@
     @stack('styles')
 </head>
 
-<body class="flex h-full metronic sidebar-fixed header-fixed bg-[#fefefe] dark:bg-coal-500">
+<body style="zoom:80%!important" class="flex h-full metronic sidebar-fixed header-fixed bg-[#fefefe] dark:bg-coal-500">
 
 @if (session('error'))
     <em class="hidden toastr" data-type="error" data-message=" {{ session('status') }}"></em>
@@ -31,7 +31,7 @@
 
 <!--begin::Theme mode setup on page load-->
 <script>
-    const defaultThemeMode = 'dark'; // light|dark|system
+    const defaultThemeMode = 'system'; // light|dark|system
     let themeMode;
 
     if (document.documentElement) {
