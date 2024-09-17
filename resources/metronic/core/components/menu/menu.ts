@@ -1128,7 +1128,7 @@ export class KTMenu extends KTComponent implements KTMenuInterface {
 	public static handleClick() {
 		KTEventHandler.on(
 			document.body,
-			'.menu-item[data-menu-item-trigger] > .menu-link, .menu-item[data-menu-item-trigger] > .menu-toggle, .menu-item[data-menu-item-trigger] > .menu-label .menu-toggle, [data-menu-item-trigger]:not(.menu-item):not([data-menu-item-trigger="auto"])',
+			'.menu-item[data-menu-item-trigger] > .menu-link, .menu-item[data-menu-item-trigger] > .menu-label .menu-toggle, .menu-item[data-menu-item-trigger] > .menu-toggle, [data-menu-item-trigger]:not(.menu-item):not([data-menu-item-trigger="auto"])',
 			'click',
 			(event: Event, target: HTMLElement) => {
 				const menu = KTMenu.getInstance(target);
@@ -1147,6 +1147,9 @@ export class KTMenu extends KTComponent implements KTMenuInterface {
 				const menu = KTMenu.getInstance(target);
 
 				if (menu !== null) {
+					if (target.tagName == 'a' || target.hasAttribute('href')) {
+						menu.dismiss(target);
+					}					
 					return menu.link(target, event);
 				}
 			}
@@ -1188,12 +1191,12 @@ export class KTMenu extends KTComponent implements KTMenuInterface {
 	}
 
 	public static initHandlers(): void {
+		this.handleDismiss();
 		this.handleClickAway();
 		this.handleKeyboard();
 		this.handleMouseover();
 		this.handleMouseout();
 		this.handleClick();
-		this.handleDismiss();
 		this.handleResize();
 	}
 

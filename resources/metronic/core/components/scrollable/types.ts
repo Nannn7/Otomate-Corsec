@@ -2,7 +2,7 @@ export interface KTScrollableConfigInterface {
 	save: boolean,
 	dependencies: string,
 	wrappers: string,
-  offset: string,
+  offset: string
 }
 
 export interface KTScrollableInterface {	

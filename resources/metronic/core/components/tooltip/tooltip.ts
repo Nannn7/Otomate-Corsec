@@ -286,7 +286,7 @@ export class KTTooltip extends KTComponent implements KTTooltipInterface {
   }
 
   public static createInstances(): void {
-    document.querySelectorAll('[data-tooltip]:not([data-tooltip="false"]').forEach((element) => {
+    document.querySelectorAll('[data-tooltip]:not([data-tooltip="false"])').forEach((element) => {
       new KTTooltip(element as HTMLElement);
     });
   }

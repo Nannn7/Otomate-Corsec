@@ -6,6 +6,7 @@ export default plugin(({addComponents, theme}) => {
   addComponents({
     '.container-fixed': {
 			'flex-grow': '1',
+			'width': '100%',
 			'padding-left': theme('custom.components.container.fixed.px.DEFAULT'),
       'padding-right': theme('custom.components.container.fixed.px.DEFAULT')
     },
@@ -23,6 +24,7 @@ export default plugin(({addComponents, theme}) => {
 	// Fluid
   addComponents({
     '.container-fluid': {
+			'width': '100%',
 			'flex-grow': '1',
 			'padding-left': theme('custom.components.container.fluid.px.DEFAULT'),
       'padding-right': theme('custom.components.container.fluid.px.DEFAULT')

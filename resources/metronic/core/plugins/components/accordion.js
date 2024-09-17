@@ -11,6 +11,7 @@ export default plugin(({addComponents}) => {
 			'display': 'flex',
 			'flex-grow': '1',
 			'align-items': 'center',
+			'text-align': 'start',
 			'justify-content': 'space-between',
 		},
 		'.accordion-content': {

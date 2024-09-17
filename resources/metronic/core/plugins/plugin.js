@@ -27,13 +27,19 @@ export default plugin(({config, addBase, addComponents, addVariant, e}) => {
       'flex-grow': '1',
       'line-height': '1',
     },
+    '.menu-toggle': {
+      'display': 'flex',
+      'align-items': 'center',
+      'flex-grow': '1',
+      'line-height': '1',
+    },
     '.menu-title': {
       'display': 'flex',
       'align-items': 'center',
       'line-height': '1',
       'flex-grow': '1',
     },
-    '.menu-icon, .menu-toggle, .menu-bullet, .menu-badge, .menu-arrow': {
+    '.menu-icon, .menu-bullet, .menu-badge, .menu-arrow': {
       'display': 'flex',
       'align-items': 'center',
       'flex-shrink': '0',
@@ -85,6 +91,16 @@ export default plugin(({config, addBase, addComponents, addVariant, e}) => {
       modifySelectors(({className}) => {
         return `.menu-item.active > .menu-label .${e(`menu-item-active${separator}${className}`)}`;
       });
+    },
+    ({modifySelectors, separator}) => {
+      modifySelectors(({className}) => {
+        return `.menu-item.active > .menu-toggle.${e(`menu-item-active${separator}${className}`)}`;
+      });
+    },
+    ({modifySelectors, separator}) => {
+      modifySelectors(({className}) => {
+        return `.menu-item.active > .menu-toggle .${e(`menu-item-active${separator}${className}`)}`;
+      });
     }
   ]);
 
@@ -112,6 +128,16 @@ export default plugin(({config, addBase, addComponents, addVariant, e}) => {
     ({modifySelectors, separator}) => {
       modifySelectors(({className}) => {
         return `.menu-item.here > .menu-label .${e(`menu-item-here${separator}${className}`)}`;
+      });
+    },
+    ({modifySelectors, separator}) => {
+      modifySelectors(({className}) => {
+        return `.menu-item.here > .menu-toggle.${e(`menu-item-here${separator}${className}`)}`;
+      });
+    },
+    ({modifySelectors, separator}) => {
+      modifySelectors(({className}) => {
+        return `.menu-item.here > .menu-toggle .${e(`menu-item-here${separator}${className}`)}`;
       });
     }
   ]);
@@ -141,6 +167,54 @@ export default plugin(({config, addBase, addComponents, addVariant, e}) => {
       modifySelectors(({className}) => {
         return `.menu-item.show > .menu-label .${e(`menu-item-show${separator}${className}`)}`;
       });
+    },
+    ({modifySelectors, separator}) => {
+      modifySelectors(({className}) => {
+        return `.menu-item.show > .menu-toggle.${e(`menu-item-show${separator}${className}`)}`;
+      });
+    },
+    ({modifySelectors, separator}) => {
+      modifySelectors(({className}) => {
+        return `.menu-item.show > .menu-toggle .${e(`menu-item-show${separator}${className}`)}`;
+      });
+    }
+  ]);
+
+  addVariant('menu-item-disabled', [
+    ({modifySelectors, separator}) => {
+      modifySelectors(({className}) => {
+        return `.menu-item.disabled.${e(`menu-item-disabled${separator}${className}`)}`;
+      });
+    },
+    ({modifySelectors, separator}) => {
+      modifySelectors(({className}) => {
+        return `.menu-item.disabled > .menu-link.${e(`menu-item-disabled${separator}${className}`)}`;
+      });
+    },
+    ({modifySelectors, separator}) => {
+      modifySelectors(({className}) => {
+        return `.menu-item.disabled > .menu-link .${e(`menu-item-disabled${separator}${className}`)}`;
+      });
+    },
+    ({modifySelectors, separator}) => {
+      modifySelectors(({className}) => {
+        return `.menu-item.disabled > .menu-label.${e(`menu-item-disabled${separator}${className}`)}`;
+      });
+    },
+    ({modifySelectors, separator}) => {
+      modifySelectors(({className}) => {
+        return `.menu-item.disabled > .menu-label .${e(`menu-item-disabled${separator}${className}`)}`;
+      });
+    },
+    ({modifySelectors, separator}) => {
+      modifySelectors(({className}) => {
+        return `.menu-item.disabled > .menu-toggle.${e(`menu-item-disabled${separator}${className}`)}`;
+      });
+    },
+    ({modifySelectors, separator}) => {
+      modifySelectors(({className}) => {
+        return `.menu-item.disabled > .menu-toggle .${e(`menu-item-disabled${separator}${className}`)}`;
+      });
     }
   ]);
 
@@ -168,7 +242,7 @@ export default plugin(({config, addBase, addComponents, addVariant, e}) => {
         return `.menu-link:focus .${e(`menu-link-focus${separator}${className}`)}`;
       });
     },
-  ]);
+  ]); 
   
   // DataTable
   addVariant('datatable-loading', [

@@ -76,7 +76,7 @@ export interface KTDataTableConfigInterface {
 	stateSave?: boolean;
 	stateNamespace?: string;
 	pageSizes?: number[];
-	columns: {
+	columns?: {
 		[key: keyof KTDataTableDataInterface | string]: {
 			title?: string,
 			render?: (item: KTDataTableDataInterface[keyof KTDataTableDataInterface] | string, data: KTDataTableDataInterface, context: KTDataTableInterface) => string,

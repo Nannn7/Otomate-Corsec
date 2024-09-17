@@ -20,13 +20,14 @@ export class KTSticky extends KTComponent implements KTStickyInterface {
     offset: 0,
     reverse: false,
     release: '',
-    activate: ''
+    activate: '',
   };
   protected override _config: KTStickyConfigInterface = this._defaultConfig;
   protected _attributeRoot: string;
   protected _eventTriggerState: boolean;
   protected _lastScrollTop: number;
   protected _releaseElement: HTMLElement;
+  protected _activateElement: HTMLElement;
   protected _wrapperElement: HTMLElement;
 
   constructor(element: HTMLElement, config: KTStickyConfigInterface | null = null) {
@@ -38,6 +39,7 @@ export class KTSticky extends KTComponent implements KTStickyInterface {
     this._buildConfig(config);
 
     this._releaseElement = KTDom.getElement(this._getOption('release') as string);
+    this._activateElement = KTDom.getElement(this._getOption('activate') as string);
     this._wrapperElement = this._element.closest('[data-sticky-wrapper]');
     this._attributeRoot = `data-sticky-${this._getOption('name')}`;
     this._eventTriggerState = true;
@@ -68,21 +70,20 @@ export class KTSticky extends KTComponent implements KTStickyInterface {
 
   protected _process(): void {
     const reverse = this._getOption('reverse');
-    const activateOffset = this._getActivateOffset();
-    const releaseOffset = this._getReleaseOffset();
+    const offset = this._getOffset();
 
-    if (activateOffset < 0) {
+    if (offset < 0) {
       this._disable();
       return;
     }
 
     const st = KTDom.getScrollTop();
-    const proceed = (!this._releaseElement || releaseOffset > st);
+    const release = (this._releaseElement && KTDom.isPartiallyInViewport(this._releaseElement));
 
     // Release on reverse scroll mode
     if (reverse === true) {
       // Forward scroll mode
-      if (st > activateOffset && proceed) {
+      if (st > offset && !release) {
         if (document.body.hasAttribute(this._attributeRoot) === false) {
           if (this._enable() === false) {
             return;
@@ -101,6 +102,9 @@ export class KTSticky extends KTComponent implements KTStickyInterface {
       } else {
         if (document.body.hasAttribute(this._attributeRoot) === true) {
           this._disable();
+          if (release) {
+            this._element.classList.add('release');
+          }
           document.body.removeAttribute(this._attributeRoot);
         }
 
@@ -116,7 +120,7 @@ export class KTSticky extends KTComponent implements KTStickyInterface {
       // Classic scroll mode
     } else {
       // Forward scroll mode
-      if (st > activateOffset && proceed) {
+      if (st > offset && !release) {
         if (document.body.hasAttribute(this._attributeRoot) === false) {
           if (this._enable() === false) {
             return;
@@ -135,6 +139,9 @@ export class KTSticky extends KTComponent implements KTStickyInterface {
       } else { // back scroll mode
         if (document.body.hasAttribute(this._attributeRoot) === true) {
           this._disable();
+          if (release) {
+            this._element.classList.add('release');
+          }
           document.body.removeAttribute(this._attributeRoot);
         }
 
@@ -148,22 +155,12 @@ export class KTSticky extends KTComponent implements KTStickyInterface {
     }
   }
 
-  protected _getActivateOffset(): number {
+  protected _getOffset(): number {
     let offset = parseInt(this._getOption('offset') as string);
     const activateElement = KTDom.getElement(this._getOption('activate') as string);
 
     if (activateElement) {
       offset = Math.abs(offset - activateElement.offsetTop);
-    }
-
-    return offset;
-  }
-
-  protected _getReleaseOffset(): number {
-    let offset = parseInt(this._getOption('offset') as string);
-
-    if (this._releaseElement && this._releaseElement.offsetTop) {
-      offset = Math.abs(offset - this._releaseElement.offsetTop);
     }
 
     return offset;
@@ -235,6 +232,7 @@ export class KTSticky extends KTComponent implements KTStickyInterface {
     }
 
     this._element.classList.add('active');
+    this._element.classList.remove('release');
 
     return true;
   }

@@ -209,7 +209,6 @@ export default plugin(({addComponents, theme}) => {
       'padding-left': '0',
       'padding-right': '0',
       'border-radius': '0',
-      'font-weight': theme('fontWeight.semibold'),
       'background-color': 'transparent',      
       'border-bottom': '1px dashed var(--tw-primary)',
       '&:hover, &:focus, &:active, &.active' : {

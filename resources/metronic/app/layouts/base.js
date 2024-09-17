@@ -4,10 +4,10 @@ class KTLayout {
 	}
 
 	static _handleMegaMenu() {
-		const megamenuEl = document.querySelector('#megamenu');
-		if (!megamenuEl) return;
+		const megaMenuEl = document.querySelector('#mega_menu');
+		if (!megaMenuEl) return;
 
-		const menu = KTMenu.getInstance(megamenuEl);
+		const menu = KTMenu.getInstance(megaMenuEl);
 		menu.disable();
 
 		setTimeout(() => {

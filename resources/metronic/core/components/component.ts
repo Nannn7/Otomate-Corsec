@@ -70,21 +70,21 @@ export default class KTComponent {
     const parts = String(value).split('|');
 
     if (parts.length > 1) {
-      parts.every((part) => {
-        if (part.includes(':')) {
-          const [breakpointKey, breakpointValue] = part.split(':');
-          const breakpoint = KTUtils.getBreakpoint(breakpointKey as KTBreakpointType);
+      for (let i = parts.length - 1; i < parts.length; i--) {
+        const part = parts[i];
 
+        if (part.includes(':')) {
+          const [breakpointKey, breakpointValue] = part.split(':');    
+          const breakpoint = KTUtils.getBreakpoint(breakpointKey as KTBreakpointType);
           if (breakpoint <= width) {
             result = breakpointValue;
-            return false;
+            break;
           }
         } else {
           result = part;
+          break;
         }
-
-        return true;
-      });
+      }
     } else {
       result = value;
     }

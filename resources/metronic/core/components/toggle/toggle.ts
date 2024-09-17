@@ -131,7 +131,7 @@ export class KTToggle extends KTComponent implements KTToggleInterface {
   }
 
   public static createInstances(): void {
-    const elements = document.querySelectorAll('[data-toggle]:not([data-toggle="false"]');
+    const elements = document.querySelectorAll('[data-toggle]:not([data-toggle="false"])');
     elements.forEach((element) => {
       new KTToggle(element as HTMLElement);
     });

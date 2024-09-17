@@ -90,7 +90,7 @@ export class KTScrollto extends KTComponent implements KTScrolltoInterface {
   }
 
   public static createInstances(): void {
-    const elements = document.querySelectorAll('[data-scrollto]:not([data-scrollto="false"]');
+    const elements = document.querySelectorAll('[data-scrollto]:not([data-scrollto="false"])');
     
     elements.forEach((element) => {
       new KTScrollto(element as HTMLElement);

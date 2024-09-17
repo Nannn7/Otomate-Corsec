@@ -120,7 +120,7 @@ export class KTDismiss extends KTComponent implements KTDismissInterface {
   }
 
   public static createInstances(): void {
-    const elements = document.querySelectorAll('[data-dismiss]:not([data-dismiss="false"]');
+    const elements = document.querySelectorAll('[data-dismiss]:not([data-dismiss="false"])');
 
     elements.forEach((element) => {
       new KTDismiss(element as HTMLElement);

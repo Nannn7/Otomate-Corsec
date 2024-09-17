@@ -19,7 +19,7 @@ export class KTScrollable extends KTComponent implements KTScrollableInterface {
     save: true,
     dependencies: '',
     wrappers: '',
-    offset: '',
+    offset: ''
   };
   protected override _config: KTScrollableConfigInterface = this._defaultConfig;
   protected _elementId: string | null = null;
@@ -53,11 +53,12 @@ export class KTScrollable extends KTComponent implements KTScrollableInterface {
 
   protected _setupHeight(): void {
     if (!this._element) return;
+    
     const heightType = this._getHeightType();
     const height = this._getHeight();
 
     // Set height
-    if (height && height.length > 0) {
+    if (height && height != '0' && height.length > 0) {
       this._element.style.setProperty(heightType, height);
     } else {
       this._element.style.setProperty(heightType, '');

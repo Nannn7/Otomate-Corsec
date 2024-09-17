@@ -166,7 +166,7 @@ export class KTCollapse extends KTComponent implements KTCollapseInterface {
   }
 
   public static createInstances(): void {
-    const elements = document.querySelectorAll('[data-collapse]:not([data-collapse="false"]');
+    const elements = document.querySelectorAll('[data-collapse]:not([data-collapse="false"])');
 
     elements.forEach((element) => {
       new KTCollapse(element as HTMLElement);

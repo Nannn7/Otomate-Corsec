@@ -24,7 +24,7 @@ export class KTTogglePassword extends KTComponent implements KTTogglePasswordInt
     this._buildConfig(config);
 
     this._triggerElement = this._element.querySelector('[data-toggle-password-trigger]');
-    this._inputElement = this._element.querySelector('input[type="password"]');
+    this._inputElement = this._element.querySelector('input');
     
     if (!this._triggerElement || !this._inputElement) {
       return;
@@ -36,12 +36,11 @@ export class KTTogglePassword extends KTComponent implements KTTogglePasswordInt
   protected _handlers(): void {
     if (!this._element) return;
 
-    this._triggerElement.addEventListener('click', () => {
+    this._triggerElement.addEventListener('click', (e: Event) => {
       this._toggle();
     });
 
     this._inputElement.addEventListener('input', () => {
-
       this._update();
     });
   }

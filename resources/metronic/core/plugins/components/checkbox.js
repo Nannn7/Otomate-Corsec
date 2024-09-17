@@ -10,6 +10,9 @@ export default plugin(({addComponents, theme}) => {
 			'appearance': 'none',
 			'box-shadow': 'none',
 			'background-color': 'var(--tw-light-light)',
+			'.dark &': {
+				'background-color': 'var(--tw-coal-500)',
+			},
 			'border-radius': theme('custom.components.checkbox.DEFAULT.borderRadius'), 
 			'height': theme('custom.components.checkbox.DEFAULT.size'),
 			'width': theme('custom.components.checkbox.DEFAULT.size'),

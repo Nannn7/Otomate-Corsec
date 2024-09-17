@@ -1,10 +1,9 @@
-
 /*
-* Index
-* @version: 1.0.0
+* Metronic
 * @author: Keenthemes
 * Copyright 2024 Keenthemes
 */
+
 import KTDom from './helpers/dom';
 import KTUtils from './helpers/utils';
 import KTEventHandler from './helpers/event-handler';
@@ -51,57 +50,57 @@ export { KTTogglePassword } from './components/toggle-password';
 export { KTDataTable } from './components/datatable';
 
 const KTComponents = {
-    init(): void {
-        KTMenu.init();
-        KTDropdown.init();
-        KTModal.init();
-        KTDrawer.init();
-        KTCollapse.init();
-        KTDismiss.init();
-        KTTabs.init();
-        KTAccordion.init();
-        KTScrollspy.init();
-        KTScrollable.init();
-        KTScrollto.init();
-        KTSticky.init();
-        KTReparent.init();
-        KTToggle.init();
-        KTTooltip.init();
-        KTStepper.init();
-        KTTheme.init();
-        KTImageInput.init();
-        KTTogglePassword.init();
-        KTDataTable.init();
-    }
+	init(): void {
+		KTMenu.init();
+		KTDropdown.init();
+		KTModal.init();
+		KTDrawer.init();
+		KTCollapse.init();
+		KTDismiss.init();
+		KTTabs.init();
+		KTAccordion.init();
+		KTScrollspy.init();
+		KTScrollable.init();
+		KTScrollto.init();
+		KTSticky.init();
+		KTReparent.init();
+		KTToggle.init();
+		KTTooltip.init();
+		KTStepper.init();
+		KTTheme.init();
+		KTImageInput.init();
+		KTTogglePassword.init();
+		KTDataTable.init();
+	}
 };
 
 declare global {
-    interface Window {
-        KTUtils: typeof KTUtils;
-        KTDom: typeof KTDom;
-        KTEventHandler: typeof KTEventHandler;
-        KTMenu: typeof KTMenu;
-        KTDropdown: typeof KTDropdown;
-        KTModal: typeof KTModal;
-        KTDrawer: typeof KTDrawer;
-        KTCollapse: typeof KTCollapse;
-        KTDismiss: typeof KTDismiss;
-        KTTabs: typeof KTTabs;
-        KTAccordion: typeof KTAccordion;
-        KTScrollspy: typeof KTScrollspy;
-        KTScrollable: typeof KTScrollable;
-        KTScrollto: typeof KTScrollto;
-        KTSticky: typeof KTSticky;
-        KTReparent: typeof KTReparent;
-        KTToggle: typeof KTToggle;
-        KTTooltip: typeof KTTooltip;
-        KTStepper: typeof KTStepper;
-        KTTheme: typeof KTTheme;
-        KTImageInput: typeof KTImageInput;
-        KTTogglePassword: typeof KTTogglePassword;
-        KTDataTable: typeof KTDataTable;
-        KTComponents: typeof KTComponents;
-    }
+	interface Window {
+		KTUtils: typeof KTUtils;
+		KTDom: typeof KTDom;
+		KTEventHandler: typeof KTEventHandler;
+		KTMenu: typeof KTMenu;
+		KTDropdown: typeof KTDropdown;
+		KTModal: typeof KTModal;
+		KTDrawer: typeof KTDrawer;
+		KTCollapse: typeof KTCollapse;
+		KTDismiss: typeof KTDismiss;
+		KTTabs: typeof KTTabs;
+		KTAccordion: typeof KTAccordion;
+		KTScrollspy: typeof KTScrollspy;
+		KTScrollable: typeof KTScrollable;
+		KTScrollto: typeof KTScrollto;
+		KTSticky: typeof KTSticky;
+		KTReparent: typeof KTReparent;
+		KTToggle: typeof KTToggle;
+		KTTooltip: typeof KTTooltip;
+		KTStepper: typeof KTStepper;
+		KTTheme: typeof KTTheme;
+		KTImageInput: typeof KTImageInput;
+		KTTogglePassword: typeof KTTogglePassword;
+		KTDataTable: typeof KTDataTable;
+		KTComponents: typeof KTComponents;
+	}
 }
 
 window.KTUtils = KTUtils;
@@ -132,6 +131,5 @@ window.KTComponents = KTComponents;
 export default KTComponents;
 
 KTDom.ready(() => {
-    KTComponents.init();
+	KTComponents.init();
 });
-
