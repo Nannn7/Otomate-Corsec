@@ -1316,7 +1316,7 @@
                         </div>
                         <div class="flex flex-col" data-menu-dismiss="true">
                             <div class="menu-item">
-                                <a class="menu-link" href="html/demo1/account/home/user-profile.html">
+                                <a class="menu-link" href="{{ route('users.profile') }}">
 									<span class="menu-icon">
 										<i class="ki-filled ki-profile-circle">
 										</i>
