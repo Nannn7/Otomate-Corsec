@@ -8,6 +8,10 @@ import $ from "jquery";
 window.jQuery = $;
 window.$ = $;
 
+import Swal from "sweetalert2";
+window.Swal = Swal;
+window.swal = Swal;
+
 import TomSelect from "tom-select";
 
 document.querySelectorAll(".tomselect").forEach((el) => {
@@ -15,12 +19,14 @@ document.querySelectorAll(".tomselect").forEach((el) => {
         plugins: ["dropdown_input"],
         create: false,
         createOnBlur: true,
+        closeButton: true,
     };
 
     new TomSelect(el, settings);
 });
 
 import toast from "toastr";
+window.toast = toast;
 import "toastr/build/toastr.css";
 
 document.querySelectorAll(".toastr").forEach((el) => {
