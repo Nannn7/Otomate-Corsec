@@ -32,7 +32,7 @@ const KTDom = {
   hasClass(element: HTMLElement, className: string): boolean {
     // Split classNames string into an array of individual class names
     const classes = className.split(' ');
-    
+
     // Loop through each class name
     for (const className of classes) {
       // Check if the element has the current class name
@@ -41,7 +41,7 @@ const KTDom = {
         return false;
       }
     }
-    
+
     // Return true if all classes are present
     return true;
   },
@@ -154,7 +154,7 @@ const KTDom = {
 
     const result: Array<HTMLElement> = [];
     const l = element.childNodes.length;
-    let i = 0; 
+    let i = 0;
 
     for (i = 0; i < l; i++) {
       if (element.childNodes[i].nodeType == 1 && (element.childNodes[i] as HTMLElement).matches(selector)) {
@@ -221,7 +221,7 @@ const KTDom = {
   },
 
   reflow(element: HTMLElement): void {
-    element.offsetHeight; 
+    element.offsetHeight;
   },
 
   insertAfter(element: HTMLElement, referenceNode: HTMLElement) {
@@ -338,7 +338,7 @@ const KTDom = {
     }
 
     prefix = KTUtils.camelCase(prefix);
-    
+
     const attributes: { [key: string]: KTOptionType } = {};
     const keys = Object.keys(element.dataset).filter((key) => key.startsWith(prefix));
 
@@ -356,6 +356,9 @@ const KTDom = {
       document.addEventListener('DOMContentLoaded', () => {
         callback();
       });
+	  document.addEventListener("livewire:navigated", () => {
+		callback();
+	  });
     } else {
       callback();
     }

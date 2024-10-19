@@ -18,7 +18,7 @@ export default plugin(({addComponents, theme}) => {
     '.menu-default': {
       'padding-top': theme('spacing')['2.5'],
       'padding-bottom': theme('spacing')['2.5'],
-      '.menu-link': {
+      '.menu-link, .menu-label': {
         'margin-left': theme('spacing')['2.5'],
         'margin-right': theme('spacing')['2.5'],
         'padding': theme('spacing')['2.5'],
@@ -53,13 +53,13 @@ export default plugin(({addComponents, theme}) => {
         'margin-bottom': theme('spacing')['2.5']
       },
       '.menu-accordion:not(.menu-no-indent)': {
-        '.menu-item > .menu-link': {
+        '.menu-item > .menu-link, .menu-item > .menu-label': {
           'margin-left': theme('spacing')['5'],
         },
-        '.menu-item > .menu-accordion .menu-item > .menu-link': {
+        '.menu-item > .menu-accordion .menu-item > .menu-link, .menu-item > .menu-accordion .menu-item > .menu-label': {
           'margin-left': theme('spacing')['8'],
         },
-        '.menu-item > .menu-accordion .menu-item > .menu-accordion .menu-item > .menu-link': {
+        '.menu-item > .menu-accordion .menu-item > .menu-accordion .menu-item > .menu-link, .menu-item > .menu-accordion .menu-item > .menu-accordion .menu-item > .menu-label': {
           'margin-left': theme('spacing')['11'],
         }
       },
@@ -67,7 +67,7 @@ export default plugin(({addComponents, theme}) => {
     '.menu-fit': {
       'padding-top': '0',
       'padding-bottom': '0',
-      '.menu-link': {
+      '.menu-link, .menu-label': {
         'margin-left': '0',
         'margin-right': '0',
       }
@@ -75,7 +75,7 @@ export default plugin(({addComponents, theme}) => {
     '.menu-space': {
       'padding-top': theme('spacing')['2.5'],
       'padding-bottom': theme('spacing')['2.5'],
-      '.menu-link': {
+      '.menu-link, .menu-label': {
         'margin-left': theme('spacing')['2.5'],
         'margin-right': theme('spacing')['2.5'],
       }
@@ -95,7 +95,7 @@ export default plugin(({addComponents, theme}) => {
         '.menu-arrow i': {
           'color': 'var(--tw-gray-500)'
         },
-        '.menu-link:hover': {
+        '.menu-link:hover, .menu-label:hover': {
           '.menu-title': {
             'color': 'var(--tw-gray-900)'
           },
@@ -104,7 +104,7 @@ export default plugin(({addComponents, theme}) => {
           }
         },
         '&.active, &.show, &.here, &.focus': {
-          '> .menu-link': {
+          '> .menu-link, > .menu-label': {
             '.menu-title': {
               'color': 'var(--tw-gray-900)'
             },
@@ -114,21 +114,21 @@ export default plugin(({addComponents, theme}) => {
           }
         },
         '&.active, &.here': {
-          '> .menu-link': {
+          '> .menu-link, > .menu-label': {
             'background-color': 'var(--tw-gray-100)',
             '.dark &': {
               'background-color': 'var(--tw-coal-300)',
             }
           }
         },
-        '& > .menu-link:hover': {
+        '& > .menu-link:hover, & > .menu-label:hover': {
           'background-color': 'var(--tw-gray-100)',
           '.dark &': {
             'background-color': 'var(--tw-coal-300)',
           }
         },
         '&.disabled': {
-          '> .menu-link': {
+          '> .menu-link, > .menu-label': {
             'opacity': '0.5'
           }
         }

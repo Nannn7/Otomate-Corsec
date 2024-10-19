@@ -10,6 +10,7 @@ import { KTStickyInterface, KTStickyConfigInterface } from './types';
 export class KTSticky extends KTComponent implements KTStickyInterface {
   protected override _name: string = 'sticky';
   protected override _defaultConfig: KTStickyConfigInterface = {
+    target: 'body',
     name: '',
     class: '',
     top: '',
@@ -23,6 +24,8 @@ export class KTSticky extends KTComponent implements KTStickyInterface {
     activate: '',
   };
   protected override _config: KTStickyConfigInterface = this._defaultConfig;
+  protected _targetElement: HTMLElement | Document | null = null;
+
   protected _attributeRoot: string;
   protected _eventTriggerState: boolean;
   protected _lastScrollTop: number;
@@ -45,9 +48,18 @@ export class KTSticky extends KTComponent implements KTStickyInterface {
     this._eventTriggerState = true;
     this._lastScrollTop = 0;
 
+    const targetElement = this._getTarget() === 'body' ? document : KTDom.getElement(this._getTarget());
+    if (!targetElement) return;
+
+    this._targetElement = targetElement;
+
     this._handlers();
     this._process();
     this._update();
+  }
+
+  private _getTarget(): string {
+    return (this._element.getAttribute('data-sticky-target') as string || this._getOption('target') as string);
   }
 
   protected _handlers(): void {
@@ -63,7 +75,7 @@ export class KTSticky extends KTComponent implements KTStickyInterface {
 			);
 		});
 
-    window.addEventListener('scroll', () => {
+    this._targetElement.addEventListener('scroll', () => {
       this._process();
     });
   }
@@ -77,7 +89,7 @@ export class KTSticky extends KTComponent implements KTStickyInterface {
       return;
     }
 
-    const st = KTDom.getScrollTop();
+    const st = this._getTarget() === 'body' ? KTDom.getScrollTop() : (this._targetElement as HTMLElement).scrollTop;
     const release = (this._releaseElement && KTDom.isPartiallyInViewport(this._releaseElement));
 
     // Release on reverse scroll mode

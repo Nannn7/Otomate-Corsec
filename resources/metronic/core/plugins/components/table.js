@@ -22,10 +22,6 @@ export default plugin(({addComponents, theme}) => {
 			},
 			'thead, tfoot': {
 				'td, th': {
-					'padding-left': theme('custom.components.table.px'),
-					'padding-right': theme('custom.components.table.px'),
-					'padding-top': theme('custom.components.table.py.head'),
-					'padding-bottom': theme('custom.components.table.py.head'),
 					'background-color': 'var(--tw-table-head-background-color)',
 					'color': 'var(--tw-gray-600)',
 					'font-weight': theme('fontWeight.medium'),
@@ -47,11 +43,7 @@ export default plugin(({addComponents, theme}) => {
 			'tbody': {
 				'vertical-align': 'inherit',
 				'tr': {
-					'td, th': {						
-						'padding-left': theme('custom.components.table.px'),
-						'padding-right': theme('custom.components.table.px'),
-						'padding-top': theme('custom.components.table.py.body'),
-						'padding-bottom': theme('custom.components.table.py.body'),						
+					'td, th': {										
 						'border-bottom':  'var(--tw-table-border)'
 					},
 					'&:last-child': {
@@ -62,8 +54,92 @@ export default plugin(({addComponents, theme}) => {
 				}	
 			}			
     }
-  });   
+  });
 
+	// Sizes
+	addComponents({
+		'.table': {
+			'thead, tfoot': {
+				'td, th': {
+					'padding-left': theme('custom.components.table.px.DEFAULT'),
+					'padding-right': theme('custom.components.table.px.DEFAULT'),
+					'padding-top': theme('custom.components.table.py.DEFAULT.head'),
+					'padding-bottom': theme('custom.components.table.py.DEFAULT.head')
+				},
+			},
+			'tbody': {
+				'tr': {
+					'td, th': {						
+						'padding-left': theme('custom.components.table.px.DEFAULT'),
+						'padding-right': theme('custom.components.table.px.DEFAULT'),
+						'padding-top': theme('custom.components.table.py.DEFAULT.body'),
+						'padding-bottom': theme('custom.components.table.py.DEFAULT.body')
+					}
+				}
+			}			
+    },
+    '.table-xs': {
+			'thead, tfoot': {
+				'td, th': {
+					'padding-left': theme('custom.components.table.px.xs'),
+					'padding-right': theme('custom.components.table.px.xs'),
+					'padding-top': theme('custom.components.table.py.xs.head'),
+					'padding-bottom': theme('custom.components.table.py.xs.head')
+				},
+			},
+			'tbody': {
+				'tr': {
+					'td, th': {						
+						'padding-left': theme('custom.components.table.px.xs'),
+						'padding-right': theme('custom.components.table.px.xs'),
+						'padding-top': theme('custom.components.table.py.xs.body'),
+						'padding-bottom': theme('custom.components.table.py.xs.body')
+					}
+				}
+			}			
+    },
+		'.table-sm': {
+			'thead, tfoot': {
+				'td, th': {
+					'padding-left': theme('custom.components.table.px.sm'),
+					'padding-right': theme('custom.components.table.px.sm'),
+					'padding-top': theme('custom.components.table.py.sm.head'),
+					'padding-bottom': theme('custom.components.table.py.sm.head')
+				},
+			},
+			'tbody': {
+				'tr': {
+					'td, th': {						
+						'padding-left': theme('custom.components.table.px.sm'),
+						'padding-right': theme('custom.components.table.px.sm'),
+						'padding-top': theme('custom.components.table.py.sm.body'),
+						'padding-bottom': theme('custom.components.table.py.sm.body')
+					}
+				}
+			}			
+    },
+		'.table-lg': {
+			'thead, tfoot': {
+				'td, th': {
+					'padding-left': theme('custom.components.table.px.lg'),
+					'padding-right': theme('custom.components.table.px.lg'),
+					'padding-top': theme('custom.components.table.py.lg.head'),
+					'padding-bottom': theme('custom.components.table.py.lg.head')
+				},
+			},
+			'tbody': {
+				'tr': {
+					'td, th': {						
+						'padding-left': theme('custom.components.table.px.lg'),
+						'padding-right': theme('custom.components.table.px.lg'),
+						'padding-top': theme('custom.components.table.py.lg.body'),
+						'padding-bottom': theme('custom.components.table.py.lg.body')
+					}
+				}
+			}			
+    }
+  });
+	
 	// Border
 	addComponents({
     '.table-border': {

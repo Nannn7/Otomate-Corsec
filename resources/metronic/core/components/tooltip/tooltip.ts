@@ -79,11 +79,11 @@ export class KTTooltip extends KTComponent implements KTTooltipInterface {
   }
 
   protected _show(): void {
-    if (this._isOpen) return;
-
     if (this._timeout) {
       clearTimeout(this._timeout);
     }
+
+    if (this._isOpen) return;    
 
     this._timeout = setTimeout(() => {
       const payload = { cancel: false };
@@ -120,11 +120,11 @@ export class KTTooltip extends KTComponent implements KTTooltipInterface {
   }
 
   protected _hide(): void {
-    if (!this._isOpen) return;
-
     if (this._timeout) {
       clearTimeout(this._timeout);
     }
+
+    if (!this._isOpen) return;    
 
     this._timeout = setTimeout(() => {
       const payload = { cancel: false };

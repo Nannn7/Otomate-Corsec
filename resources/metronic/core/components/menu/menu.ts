@@ -36,7 +36,7 @@ export class KTMenu extends KTComponent implements KTMenuInterface {
 	}
 
 	protected _click(element: HTMLElement, event: Event): void {
-		if (element.hasAttribute('href') && element.getAttribute('href') !== '#') {
+		if (element.hasAttribute('href') && element.getAttribute('href') === '#') {
 			return;
 		}
 
@@ -872,7 +872,7 @@ export class KTMenu extends KTComponent implements KTMenuInterface {
 				return KTData.get(subElement, 'menu') as KTMenu;
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -1149,7 +1149,7 @@ export class KTMenu extends KTComponent implements KTMenuInterface {
 				if (menu !== null) {
 					if (target.tagName == 'a' || target.hasAttribute('href')) {
 						menu.dismiss(target);
-					}					
+					}
 					return menu.link(target, event);
 				}
 			}

@@ -1,4 +1,5 @@
 export interface KTStickyConfigInterface {
+	target: string,
 	name: string,
 	class: string,
 	zindex: string,

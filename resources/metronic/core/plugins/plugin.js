@@ -15,23 +15,11 @@ export default plugin(({config, addBase, addComponents, addVariant, e}) => {
       'display': 'flex',
       'flex-direction': 'column'
     },
-    '.menu-link': {
+    '.menu-link, .menu-label, .menu-toggle': {
       'cursor': 'pointer',
       'display': 'flex',
       'align-items': 'center',
       'flex-grow': '1',
-    },
-    '.menu-label': {
-      'display': 'flex',
-      'align-items': 'center',
-      'flex-grow': '1',
-      'line-height': '1',
-    },
-    '.menu-toggle': {
-      'display': 'flex',
-      'align-items': 'center',
-      'flex-grow': '1',
-      'line-height': '1',
     },
     '.menu-title': {
       'display': 'flex',

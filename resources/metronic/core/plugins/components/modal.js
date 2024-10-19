@@ -27,7 +27,8 @@ export default plugin(({addComponents, theme}) => {
 			'box-shadow': 'var(--tw-modal-box-shadow)', 
 			'background-color': 'var(--tw-modal-background-color)', 
 			'display': 'flex',
-			'flex-direction': 'column'
+			'flex-direction': 'column',
+			'outline': 'none'
 		},
 
 		'.modal-header': {
@@ -52,7 +53,8 @@ export default plugin(({addComponents, theme}) => {
 			'padding-left': theme('spacing')['5'],
 			'padding-right': theme('spacing')['5'],
 			'padding-top': theme('spacing')['2.5'],
-			'padding-bottom': theme('spacing')['2.5']
+			'padding-bottom': theme('spacing')['2.5'],
+			'outline': 'none'
 		},
 		
 		'.modal-footer': {
