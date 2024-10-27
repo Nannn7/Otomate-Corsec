@@ -10,7 +10,7 @@
         "daengdeni/laravel-id-generator": "^1.0",
         "daengdeni/location-module": "dev-master",
         "daengdeni/logs-module": "dev-master",
-        "daengdeni/lpj-module": "dev-master",
+        "daengdeni/lpj-module": "dev-staging",
         "daengdeni/usermanagement-module": "dev-master",
         "diglactic/laravel-breadcrumbs": "^9.0",
         "joshbrw/laravel-module-installer": "^2.0",
