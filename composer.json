@@ -10,7 +10,7 @@
         "daengdeni/laravel-id-generator": "^1.0",
         "daengdeni/location-module": "dev-master",
         "daengdeni/logs-module": "dev-master",
-        "daengdeni/lpj-module": "dev-staging",
+        "daengdeni/basicdata-module": "dev-master",
         "daengdeni/usermanagement-module": "dev-master",
         "diglactic/laravel-breadcrumbs": "^9.0",
         "joshbrw/laravel-module-installer": "^2.0",
@@ -104,9 +104,9 @@
             "url": "https://git.putrakuningan.com/daengdeni/authentication"
         },
         {
-            "name": "daengdeni/lpj-module",
+            "name": "daengdeni/basicdata-module",
             "type": "vcs",
-            "url": "https://git.putrakuningan.com/daengdeni/lpj"
+            "url": "https://git.putrakuningan.com/daengdeni/basicdata"
         },
         {
             "name": "daengdeni/location-module",
