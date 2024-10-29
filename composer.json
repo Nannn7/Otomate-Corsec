@@ -12,7 +12,6 @@
         "daengdeni/logs-module": "dev-master",
         "daengdeni/basicdata-module": "dev-master",
         "daengdeni/usermanagement-module": "dev-master",
-        "daengdeni/lpj-module": "dev-staging",
         "diglactic/laravel-breadcrumbs": "^9.0",
         "joshbrw/laravel-module-installer": "^2.0",
         "laravel/framework": "^11.9",
@@ -113,11 +112,6 @@
             "name": "daengdeni/location-module",
             "type": "vcs",
             "url": "https://git.putrakuningan.com/daengdeni/location"
-        },
-        {
-            "name": "daengdeni/lpj-module",
-            "type": "vcs",
-            "url": "https://git.putrakuningan.com/daengdeni/lpj"
         }
     ]
 }
