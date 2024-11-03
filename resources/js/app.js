@@ -1,18 +1,17 @@
 import "./bootstrap";
-
 import "../metronic/core/index";
 import "../metronic/app/layouts/base.js";
-
 import $ from "jquery";
+import Swal from "sweetalert2";
+import TomSelect from "tom-select";
+import toast from "toastr";
+import "toastr/build/toastr.css";
 
 window.jQuery = $;
 window.$ = $;
 
-import Swal from "sweetalert2";
 window.Swal = Swal;
 window.swal = Swal;
-
-import TomSelect from "tom-select";
 
 document.querySelectorAll(".tomselect").forEach((el) => {
     let settings = {
@@ -25,9 +24,7 @@ document.querySelectorAll(".tomselect").forEach((el) => {
     new TomSelect(el, settings);
 });
 
-import toast from "toastr";
 window.toast = toast;
-import "toastr/build/toastr.css";
 
 document.querySelectorAll(".toastr").forEach((el) => {
     toast.options = {
