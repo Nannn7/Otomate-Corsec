@@ -38,3 +38,29 @@ document.querySelectorAll(".toastr").forEach((el) => {
     };
     toast[el.dataset.type](el.dataset.message);
 });
+
+// Fungsi untuk memformat tanggal ke format Indonesia
+window.formatTanggalIndonesia = function(date) {
+    const options = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    };
+    return new Date(date).toLocaleDateString('id-ID', options);
+};
+
+// Fungsi untuk memformat tanggal dan waktu ke format Indonesia
+window.formatTanggalWaktuIndonesia = function(date) {
+    const options = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+    };
+    return new Date(date).toLocaleString('id-ID', options);
+};
