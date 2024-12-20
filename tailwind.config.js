@@ -1,4 +1,4 @@
-/** @type {import('tailwindcss').Config} */
+/** @type {import("tailwindcss").Config} */
 export default {
     content: ["./resources/**/*.{blade.php,js,vue,tsx}", "./Modules/**/*.php"],
     safelist: [
@@ -210,6 +210,19 @@ export default {
                     700: "var(--tw-gray-700)",
                     800: "var(--tw-gray-800)",
                     900: "var(--tw-gray-900)",
+                },
+                agi: {
+                    50: "#effcfc",
+                    100: "#d5f6f8",
+                    200: "#b1ecf0",
+                    300: "#7bdde5",
+                    400: "#35c1d0",
+                    500: "#22a7b8",
+                    600: "#1f879b",
+                    700: "#206d7e",
+                    800: "#225968",
+                    900: "#214b58",
+                    950: "#10313c",
                 },
                 primary: {
                     DEFAULT: "var(--tw-primary)",
