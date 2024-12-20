@@ -1,9 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-    content: [
-        "./resources/**/*.{blade.php,js,vue,tsx}",
-        "./Modules/**/*.php",
-    ],
+    content: ["./resources/**/*.{blade.php,js,vue,tsx}", "./Modules/**/*.php"],
     safelist: [
         "metronic",
         "hidden",
@@ -27,7 +24,7 @@ export default {
                             400: "#C4CADA",
                             500: "#99A1B7",
                             600: "#78829D",
-                            700: "#4B5675",
+                            700: "#252F4A",
                             800: "#252F4A",
                             900: "#071437",
                         },

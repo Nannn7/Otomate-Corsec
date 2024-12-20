@@ -1,5 +1,5 @@
 <div
-    class="sidebar dark:bg-coal-600 bg-light border-r border-r-gray-400 dark:border-r-coal-100 fixed top-0 bottom-0 z-20 hidden lg:flex flex-col items-stretch shrink-0 h-full"
+    class="sidebar dark:bg-coal-600 bg-light border-r border-r-gray-200 dark:border-r-coal-100 fixed top-0 bottom-0 z-20 hidden lg:flex flex-col items-stretch shrink-0 h-full"
     data-drawer="true" data-drawer-class="drawer drawer-start top-0 bottom-0" data-drawer-enable="true|lg:false"
     id="sidebar">
     <div class="sidebar-header hidden lg:flex items-center relative justify-between px-3 lg:px-6 shrink-0"
@@ -117,7 +117,7 @@
                             @else
                                 <div class="menu-item {{ request()->routeIs($menu->path.'.*') ? 'active' : '' }}">
                                     <a class="menu-link flex items-center grow cursor-pointer border border-transparent gap-[10px] pl-[10px] pr-[10px] py-[6px]" href="{{ $menu->path ? route($menu->path.'.index') : '' }}">
-                                        <span class="menu-icon items-start text-gray-500 dark:text-gray-400 w-[20px]">
+                                        <span class="menu-icon items-start text-gray-500 dark:text-gray-400 w-[20px] menu-item-active:text-primary menu-link-hover:!text-primary">
                                             <i class="{{ $menu->icon ?? 'ki-filled ki-element-11 text-lg' }}"></i>
                                         </span>
                                         <span class="menu-title text-sm font-semibold text-gray-700 menu-item-active:text-primary menu-link-hover:!text-primary">
