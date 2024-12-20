@@ -118,8 +118,8 @@ export default {
                                 inverse: "#ffffff",
                             },
                             primary: {
-                                default: "#006AE6",
-                                active: "#107EFF",
+                                default: "#35C1D0", // Base color
+                                active: "#1AA3B5", // Lebih gelap untuk efek active
                                 light: "#172331",
                                 clarity: "rgba(0, 106, 230, 0.20)",
                                 inverse: "#ffffff",
