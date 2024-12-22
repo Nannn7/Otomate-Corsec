@@ -30,7 +30,7 @@
                         class="menu-link flex items-center grow cursor-pointer border border-transparent gap-[10px] pl-[10px] pr-[10px] py-[6px]"
                         tabindex="0">
                         <span class="menu-icon items-start text-gray-500 dark:text-gray-400 w-[20px]">
-                            <i class="ki-filled ki-element-11 text-lg"></i>
+                            <i class="ki-filled ki-element-11 text-lg text-primary"></i>
                         </span>
                         <span
                             class="menu-title text-sm font-semibold text-gray-700 menu-item-active:text-primary menu-link-hover:!text-primary">
