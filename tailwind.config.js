@@ -611,9 +611,9 @@ export default {
                 metronic: {
                     sidebar: {
                         width: {
-                            desktop: "280px",
+                            desktop: "320px",
                             desktopCollapse: "80px",
-                            mobile: "280px",
+                            mobile: "320px",
                         },
                     },
                     header: {
