@@ -22,7 +22,7 @@
 
     <div class="sidebar-content flex grow shrink-0 py-5 pr-2 h-[100%]" id="sidebar_content">
         <div class="scrollable-y-hover grow shrink-0 flex pl-2 lg:pl-5 pr-1 lg:pr-3" data-scrollable="true"
-             data-scrollable-dependencies="#sidebar_header," data-scrollable-height="auto" data-scrollable-offset="0px"
+             data-scrollable-dependencies="#sidebar_header" data-scrollable-height="auto" data-scrollable-offset="10px"
              data-scrollable-wrappers="#sidebar_content" id="sidebar_scrollable" style="--tw-scrollbar-thumb-color: var(--tw-primary)">
             <div class="menu flex flex-col grow gap-0.5" data-menu="true" data-menu-accordion-expand-all="false"
                  id="sidebar_menu">
