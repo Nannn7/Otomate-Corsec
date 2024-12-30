@@ -6,12 +6,15 @@ import Swal from "sweetalert2";
 import TomSelect from "tom-select";
 import toast from "toastr";
 import "toastr/build/toastr.css";
+import IMask from "imask";
 
 window.jQuery = $;
 window.$ = $;
 
 window.Swal = Swal;
 window.swal = Swal;
+
+window.IMask = IMask;
 
 document.querySelectorAll(".tomselect").forEach((el) => {
     let settings = {
@@ -75,3 +78,19 @@ window.formatRupiah = function (angka) {
     });
     return formatter.format(angka);
 };
+
+document.querySelectorAll(".currency").forEach((el) => {
+    IMask(el, {
+        mask: Number, // enable number mask
+
+        // other options are optional with defaults below
+        scale: 2, // digits after point, 0 for integers
+        thousandsSeparator: ".", // any single char
+        padFractionalZeros: false, // if true, then pads zeros at end to the length of scale
+        normalizeZeros: true, // appends or removes zeros at ends
+        radix: ",", // fractional delimiter
+        mapToRadix: ["."], // symbols to process as radix
+
+        autofix: true,
+    });
+});
