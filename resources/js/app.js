@@ -94,3 +94,20 @@ document.querySelectorAll(".currency").forEach((el) => {
         autofix: true,
     });
 });
+
+document.querySelectorAll(".persen").forEach((el) => {
+    IMask(el, {
+        mask: Number, // enable number mask
+        min: 0,
+        max: 100,
+        // other options are optional with defaults below
+        scale: 2, // digits after point, 0 for integers
+        thousandsSeparator: ".", // any single char
+        padFractionalZeros: false, // if true, then pads zeros at end to the length of scale
+        normalizeZeros: true, // appends or removes zeros at ends
+        radix: ",", // fractional delimiter
+        mapToRadix: ["."], // symbols to process as radix
+
+        autofix: true,
+    });
+});
