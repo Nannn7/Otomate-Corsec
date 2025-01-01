@@ -24,6 +24,10 @@
         <em class="hidden toastr" data-type="info" data-message=" {{ session('info') }}"></em>
     @endif
 
+    @if (session('warning'))
+        <em class="hidden toastr" data-type="warning" data-message=" {{ session('warning') }}"></em>
+    @endif
+
     @if (session('success'))
         <em class="hidden toastr" data-type="success" data-message=" {{ session('success') }}"></em>
     @endif

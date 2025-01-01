@@ -18,10 +18,13 @@ window.IMask = IMask;
 
 document.querySelectorAll(".tomselect").forEach((el) => {
     let settings = {
-        plugins: ["dropdown_input"],
+        plugins: ["dropdown_input", "remove_button", "clear_button"],
         create: false,
         createOnBlur: true,
         closeButton: true,
+        html: function (data) {
+            return `<div class="${data.className}" title="${data.title}">&times;</div>`;
+        },
     };
 
     new TomSelect(el, settings);
