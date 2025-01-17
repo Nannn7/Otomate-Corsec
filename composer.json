@@ -15,6 +15,7 @@
         "daengdeni/lpj-module": "dev-staging",
         "daengdeni/usermanagement-module": "dev-master",
         "diglactic/laravel-breadcrumbs": "^9.0",
+        "intervention/image": "^3.10",
         "joshbrw/laravel-module-installer": "^2.0",
         "laravel/framework": "^11.9",
         "laravel/pulse": "^1.2",
