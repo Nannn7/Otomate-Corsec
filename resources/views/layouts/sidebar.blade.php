@@ -26,7 +26,7 @@
              data-scrollable-wrappers="#sidebar_content" id="sidebar_scrollable" style="--tw-scrollbar-thumb-color: var(--tw-primary)">
             <div class="menu flex flex-col grow gap-0.5" data-menu="true" data-menu-accordion-expand-all="false"
                  id="sidebar_menu">
-                <div class="menu-item" data-menu-item-toggle="accordion" data-menu-item-trigger="click">
+                <a class="menu-item" href="/">
                     <div
                         class="menu-link flex items-center grow cursor-pointer border border-transparent gap-[10px] pl-[10px] pr-[10px] py-[6px]"
                         tabindex="0">
@@ -38,7 +38,7 @@
                             Dashboards
                         </span>
                     </div>
-                </div>
+                </a>
                 @php
                     $headingOtorisasi = 0;
                     $headingMain = 0;
