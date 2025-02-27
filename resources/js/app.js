@@ -7,6 +7,7 @@ import TomSelect from "tom-select";
 import toast from "toastr";
 import "toastr/build/toastr.css";
 import IMask from "imask";
+import FilerobotImageEditor from "filerobot-image-editor";
 
 window.jQuery = $;
 window.$ = $;
@@ -15,6 +16,7 @@ window.Swal = Swal;
 window.swal = Swal;
 
 window.IMask = IMask;
+window.FilerobotImageEditor = FilerobotImageEditor;
 
 document.querySelectorAll(".tomselect").forEach((el) => {
     let settings = {
