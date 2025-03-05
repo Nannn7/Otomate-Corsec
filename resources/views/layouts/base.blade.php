@@ -10,6 +10,8 @@
     <base href="/">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="{{ asset('vendor/dropzone/dropzone.min.css') }}" type="text/css" />
+
     @vite(Module::getAssets())
     @stack('styles')
 </head>
@@ -55,6 +57,8 @@
         }
     </script>
     <!--end::Theme mode setup on page load-->
+    <script src="{{ asset('vendor/filerobot-image-editor/filerobot-image-editor.min.js') }}"></script>
+    <script src="{{ asset('vendor/dropzone/dropzone.min.js') }}"></script>
 
     @yield('main')
     @stack('scripts')
