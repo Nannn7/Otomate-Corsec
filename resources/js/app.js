@@ -17,6 +17,7 @@ window.swal = Swal;
 
 window.IMask = IMask;
 // window.FilerobotImageEditor = FilerobotImageEditor;
+window.TomSelect = TomSelect;
 
 document.querySelectorAll(".tomselect").forEach((el) => {
     let settings = {
