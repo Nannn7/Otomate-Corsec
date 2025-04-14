@@ -44,10 +44,11 @@
                     $menus = isset($menus) ? json_decode(json_encode($menus)) : new stdClass;
 
                     // Define the order of sections
-                    $sectionOrder = ['main', 'otorisator', 'master', 'system'];
+                    $sectionOrder = ['main', 'otorisator','laporan', 'master', 'system'];
                     $sectionTitles = [
                         'main' => 'Apps',
                         'otorisator' => 'Otorisator',
+                        'laporan' => 'Laporan',
                         'master' => 'Master Data',
                         'system' => 'Systems'
                     ];
