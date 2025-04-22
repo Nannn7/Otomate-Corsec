@@ -5,7 +5,7 @@
     <div class="container-fluid flex justify-between items-stretch lg:gap-4" id="header_container">
         <div class="flex gap-1 lg:hidden items-center -ml-1">
             <a class="shrink-0" href="{{ url('/') }}">
-                <img class="max-h-[25px] w-full" src="assets/media/app/logo-agi-mini.png"/>
+                <img class="max-h-[25px] w-full" src="assets/media/app/logo-agi-mini.png" />
             </a>
             <div class="flex items-center">
                 <button class="btn btn-icon btn-light btn-clear btn-sm" data-drawer-toggle="#sidebar">
@@ -34,7 +34,7 @@
                     <i class="ki-filled ki-notification-on">
                     </i>
                     <span class="badge badge-dot badge-success size-[5px] absolute top-0.5 right-0.5 transform translate-y-1/2">
-					</span>
+                    </span>
                 </button>
                 <div class="dropdown-content light:border-gray-300 w-full max-w-[460px]">
                     <div class="flex items-center justify-between gap-2.5 text-sm text-gray-900 font-semibold px-5 py-2.5"
@@ -47,6 +47,43 @@
                     </div>
                     <div class="border-b border-b-gray-200">
                     </div>
+
+                    <div class="flex flex-col">
+                        <div class="scrollable-y-auto" data-scrollable="true" data-scrollable-dependencies="#header"
+                             data-scrollable-max-height="auto" data-scrollable-offset="200px">
+                            <div class="flex flex-col gap-5 py-5 divider-y divider-gray-200">
+                                @foreach (auth()->user()->unreadNotifications as $notification)
+                                    <div class="flex items-center grow gap-2.5 px-5">
+                                        <div
+                                            class="flex items-center justify-center size-8 bg-success-light rounded-full border border-success-clarity">
+                                            <i class="ki-filled ki-check text-lg text-success">
+                                            </i>
+                                        </div>
+                                        <div class="flex flex-col gap-1">
+                                            <span class="text-2sm font-medium text-gray-700">
+                                                {{ formatNotifikasi($notification)['title'] }}<br>
+                                                {{ formatNotifikasi($notification)['message'] }}<br>
+
+                                            </span>
+                                            <span class="font-medium text-gray-500 text-2xs">
+                                                {{ $notification->created_at->diffForHumans() }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    @if(!$loop->last)
+                                    <div class="border-b border-b-gray-200"></div>
+                                    @endif
+                                @endforeach
+                            </div>
+                        </div>
+                        <div class="border-b border-b-gray-200">
+                        </div>
+                        <div class="grid grid-cols-2 p-5 gap-2.5" id="notifications_all_footer">
+                            <button class="btn btn-sm btn-light justify-center">
+                                Mark all as read
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="menu" data-menu="true">
@@ -54,16 +91,16 @@
                      data-menu-item-toggle="dropdown" data-menu-item-trigger="click|lg:click">
                     <div class="menu-toggle btn btn-icon rounded-full">
                         <img alt="" class="size-9 rounded-full border-2 border-success shrink-0"
-                             src="assets/media/avatars/300-2.png"/>
+                             src="assets/media/avatars/300-2.png" />
                     </div>
                     <div class="menu-dropdown menu-default light:border-gray-300 w-full max-w-[350px]">
                         <div class="flex items-start justify-between px-5 py-1.5 gap-1.5">
                             <div class="flex items-start gap-2">
-                                <img alt="" class="size-9 rounded-full border-2 border-success" src="assets/media/avatars/300-2.png"/>
+                                <img alt="" class="size-9 rounded-full border-2 border-success" src="assets/media/avatars/300-2.png" />
                                 <div class="flex flex-col gap-1.5">
-									<span class="text-sm text-gray-800 font-semibold leading-none">
-										{{ Auth::user()->name }}
-									</span>
+                                    <span class="text-sm text-gray-800 font-semibold leading-none">
+                                        {{ Auth::user()->name }}
+                                    </span>
                                     <span class="text-xs text-gray-600 hover:text-primary font-medium leading-none">
                                         {{ Auth::user()->nik ?? "" }} | {{ Auth::user()->branch->name ?? "" }}
                                     </span>
@@ -78,13 +115,13 @@
                         <div class="flex flex-col" data-menu-dismiss="true">
                             <div class="menu-item">
                                 <a class="menu-link" href="{{ route('users.profile') }}">
-									<span class="menu-icon">
-										<i class="ki-filled ki-profile-circle">
-										</i>
-									</span>
+                                    <span class="menu-icon">
+                                        <i class="ki-filled ki-profile-circle">
+                                        </i>
+                                    </span>
                                     <span class="menu-title">
-										My Profile
-									</span>
+                                        My Profile
+                                    </span>
                                 </a>
                             </div>
                         </div>
@@ -93,15 +130,15 @@
                         <div class="flex flex-col">
                             <div class="menu-item mb-0.5">
                                 <div class="menu-link">
-									<span class="menu-icon">
-										<i class="ki-filled ki-moon">
-										</i>
-									</span>
+                                    <span class="menu-icon">
+                                        <i class="ki-filled ki-moon">
+                                        </i>
+                                    </span>
                                     <span class="menu-title">
-										Dark Mode
-									</span>
+                                        Dark Mode
+                                    </span>
                                     <label class="switch switch-sm">
-                                        <input data-theme-state="dark" data-theme-toggle="true" name="check" type="checkbox" value="1"/>
+                                        <input data-theme-state="dark" data-theme-toggle="true" name="check" type="checkbox" value="1" />
                                     </label>
                                 </div>
                             </div>
