@@ -165,12 +165,12 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Check if there are unread notifications
-            const unreadNotifications = {{ auth()->user()->unreadNotifications->count() }};
+            // Initial count of unread notifications
+            let previousNotificationCount = {{ auth()->user()->unreadNotifications->count() }};
             const notificationSound = document.getElementById('notification-sound');
 
-            // Play sound if there are unread notifications
-            if (unreadNotifications > 0 && notificationSound) {
+            // Play sound if there are unread notifications on page load
+            if (previousNotificationCount > 0 && notificationSound) {
                 // Set a flag in localStorage to track if sound has been played in this session
                 const soundPlayed = localStorage.getItem('notification_sound_played');
 
@@ -189,6 +189,53 @@
                     }, 5 * 60 * 1000);
                 }
             }
+
+            // Function to check for new notifications
+            function checkForNewNotifications() {
+                fetch('{{ route("notifications.count") }}')
+                    .then(response => response.json())
+                    .then(data => {
+                        const currentCount = data.count;
+
+                        // If there are more notifications than before, play the sound
+                        if (currentCount > previousNotificationCount) {
+                            // Play notification sound
+                            if (notificationSound) {
+                                notificationSound.play().catch(error => {
+                                    console.error('Error playing notification sound:', error);
+                                });
+                            }
+
+                            // Update the notification UI (optional)
+                            updateNotificationUI(currentCount);
+                        }
+
+                        // Update the previous count
+                        previousNotificationCount = currentCount;
+                    })
+                    .catch(error => {
+                        console.error('Error checking for notifications:', error);
+                    });
+            }
+
+            // Function to update notification UI (optional)
+            function updateNotificationUI(count) {
+                // Update notification badge or UI elements if needed
+                const badge = document.querySelector('.badge-dot.badge-success');
+                if (badge) {
+                    // Make the badge more visible when new notifications arrive
+                    badge.classList.add('animate-pulse');
+                    setTimeout(() => {
+                        badge.classList.remove('animate-pulse');
+                    }, 3000);
+                }
+
+                // You might want to refresh the notification list here
+                // This would require an additional endpoint to fetch the latest notifications
+            }
+
+            // Check for new notifications every 30 seconds
+            setInterval(checkForNewNotifications, 1);
         });
     </script>
 @endpush
