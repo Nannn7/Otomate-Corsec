@@ -74,6 +74,12 @@
                                     <div class="border-b border-b-gray-200"></div>
                                     @endif
                                 @endforeach
+
+                                    <!-- Notification sound -->
+                                    <audio id="notification-sound" style="display: none;">
+                                        <source src="{{ asset('assets/media/notif/1.mp3') }}" type="audio/mpeg">
+                                    </audio>
+
                             </div>
                         </div>
                         <div class="border-b border-b-gray-200">
@@ -155,3 +161,34 @@
     </div>
     <!-- end: container -->
 </header>
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if there are unread notifications
+            const unreadNotifications = {{ auth()->user()->unreadNotifications->count() }};
+            const notificationSound = document.getElementById('notification-sound');
+
+            // Play sound if there are unread notifications
+            if (unreadNotifications > 0 && notificationSound) {
+                // Set a flag in localStorage to track if sound has been played in this session
+                const soundPlayed = localStorage.getItem('notification_sound_played');
+
+                if (!soundPlayed) {
+                    // Play the notification sound
+                    notificationSound.play().catch(error => {
+                        console.error('Error playing notification sound:', error);
+                    });
+
+                    // Set the flag to prevent playing the sound again in this session
+                    localStorage.setItem('notification_sound_played', 'true');
+
+                    // Clear the flag after 5 minutes to allow sound to play again if user refreshes
+                    setTimeout(() => {
+                        localStorage.removeItem('notification_sound_played');
+                    }, 5 * 60 * 1000);
+                }
+            }
+        });
+    </script>
+@endpush
