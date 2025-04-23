@@ -84,7 +84,31 @@
                                                     <i class="{{ $menu->icon ?? 'ki-filled ki-element-11 text-lg' }}"></i>
                                                 </span>
                                                 <span class="menu-title text-sm font-semibold text-gray-700 menu-item-active:text-primary menu-link-hover:!text-primary">
-                                                    {{ $menu->title }}
+                                                    @php
+                                                        $title = $menu->title;
+                                                        if(strlen($title) > 30) {
+                                                            $words = explode(' ', $title);
+                                                            $lines = [];
+                                                            $currentLine = '';
+
+                                                            foreach($words as $word) {
+                                                                if(strlen($currentLine . ' ' . $word) <= 30 || empty($currentLine)) {
+                                                                    $currentLine = empty($currentLine) ? $word : $currentLine . ' ' . $word;
+                                                                } else {
+                                                                    $lines[] = $currentLine;
+                                                                    $currentLine = $word;
+                                                                }
+                                                            }
+
+                                                            if(!empty($currentLine)) {
+                                                                $lines[] = $currentLine;
+                                                            }
+
+                                                            echo implode('<br>', $lines);
+                                                        } else {
+                                                            echo $title;
+                                                        }
+                                                    @endphp
                                                 </span>
                                                 <span class="menu-arrow text-gray-400 w-[20px] shrink-0 justify-end ml-1 mr-[-10px]">
                                                     <i class="ki-filled ki-plus text-2xs menu-item-show:hidden">
@@ -121,7 +145,31 @@
                                                     <i class="{{ $menu->icon ?? 'ki-filled ki-element-11 text-lg' }}"></i>
                                                 </span>
                                                 <span class="menu-title text-sm font-semibold text-gray-700 menu-item-active:text-primary menu-link-hover:!text-primary">
-                                                    {{ $menu->title }}
+                                                    @php
+                                                        $title = $menu->title;
+                                                        if(strlen($title) > 30) {
+                                                            $words = explode(' ', $title);
+                                                            $lines = [];
+                                                            $currentLine = '';
+
+                                                            foreach($words as $word) {
+                                                                if(strlen($currentLine . ' ' . $word) <= 30 || empty($currentLine)) {
+                                                                    $currentLine = empty($currentLine) ? $word : $currentLine . ' ' . $word;
+                                                                } else {
+                                                                    $lines[] = $currentLine;
+                                                                    $currentLine = $word;
+                                                                }
+                                                            }
+
+                                                            if(!empty($currentLine)) {
+                                                                $lines[] = $currentLine;
+                                                            }
+
+                                                            echo implode('<br>', $lines);
+                                                        } else {
+                                                            echo $title;
+                                                        }
+                                                    @endphp
                                                 </span>
                                             </a>
                                         </div>
