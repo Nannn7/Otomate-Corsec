@@ -201,6 +201,9 @@
                         if (currentCount > previousNotificationCount) {
                             // Play notification sound
                             if (notificationSound) {
+                                setTimeout(() => {
+                                    window.location.reload();
+                                },5000);
                                 notificationSound.play().catch(error => {
                                     console.error('Error playing notification sound:', error);
                                 });
@@ -235,7 +238,7 @@
             }
 
             // Check for new notifications every 30 seconds
-            setInterval(checkForNewNotifications, 1);
+            setInterval(checkForNewNotifications, 5000);
         });
     </script>
 @endpush
