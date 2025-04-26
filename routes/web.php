@@ -6,4 +6,9 @@ use Illuminate\Support\Facades\Route;
             return view('welcome');
         })->name('dashboard');
 
+        Route::get('/notifications/count', function () {
+            return response()->json([
+                'count' => auth()->user()->unreadNotifications->count()
+            ]);
+        })->name('notifications.count')->middleware('auth');
     });

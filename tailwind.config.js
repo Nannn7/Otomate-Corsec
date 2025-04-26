@@ -1,9 +1,6 @@
-/** @type {import('tailwindcss').Config} */
+/** @type {import("tailwindcss").Config} */
 export default {
-    content: [
-        "./resources/**/*.{blade.php,js,vue,tsx}",
-        "./Modules/**/*.php",
-    ],
+    content: ["./resources/**/*.{blade.php,js,vue,tsx}", "./Modules/**/*.php"],
     safelist: [
         "metronic",
         "hidden",
@@ -27,7 +24,7 @@ export default {
                             400: "#C4CADA",
                             500: "#99A1B7",
                             600: "#78829D",
-                            700: "#4B5675",
+                            700: "#252F4A",
                             800: "#252F4A",
                             900: "#071437",
                         },
@@ -53,8 +50,8 @@ export default {
                                 inverse: "#ffffff",
                             },
                             primary: {
-                                default: "#1B84FF",
-                                active: "#056EE9",
+                                default: "#35C1D0", // Base color
+                                active: "#1AA3B5", // Lebih gelap untuk efek active
                                 light: "#EFF6FF",
                                 clarity: "rgba(27, 132, 255, 0.20)",
                                 inverse: "#ffffff",
@@ -118,8 +115,8 @@ export default {
                                 inverse: "#ffffff",
                             },
                             primary: {
-                                default: "#006AE6",
-                                active: "#107EFF",
+                                default: "#35C1D0", // Base color
+                                active: "#1AA3B5", // Lebih gelap untuk efek active
                                 light: "#172331",
                                 clarity: "rgba(0, 106, 230, 0.20)",
                                 inverse: "#ffffff",
@@ -213,6 +210,19 @@ export default {
                     700: "var(--tw-gray-700)",
                     800: "var(--tw-gray-800)",
                     900: "var(--tw-gray-900)",
+                },
+                agi: {
+                    50: "#effcfc",
+                    100: "#d5f6f8",
+                    200: "#b1ecf0",
+                    300: "#7bdde5",
+                    400: "#35c1d0",
+                    500: "#22a7b8",
+                    600: "#1f879b",
+                    700: "#206d7e",
+                    800: "#225968",
+                    900: "#214b58",
+                    950: "#10313c",
                 },
                 primary: {
                     DEFAULT: "var(--tw-primary)",
@@ -601,9 +611,9 @@ export default {
                 metronic: {
                     sidebar: {
                         width: {
-                            desktop: "280px",
+                            desktop: "320px",
                             desktopCollapse: "80px",
-                            mobile: "280px",
+                            mobile: "320px",
                         },
                     },
                     header: {
