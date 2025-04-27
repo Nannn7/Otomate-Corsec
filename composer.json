@@ -5,16 +5,16 @@
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "barryvdh/laravel-dompdf": "^3.0",
         "daengdeni/authentication-module": "dev-master",
         "daengdeni/basicdata-module": "dev-master",
         "daengdeni/laravel-id-generator": "^1.0",
         "daengdeni/location-module": "dev-master",
         "daengdeni/logs-module": "dev-master",
-        "daengdeni/basicdata-module": "dev-master",
         "daengdeni/usermanagement-module": "dev-master",
-        "diglactic/laravel-breadcrumbs": "^9.0",
+        "diglactic/laravel-breadcrumbs": "^10.0",
+        "jackiedo/log-reader": "^2.4",
         "joshbrw/laravel-module-installer": "^2.0",
         "laravel/framework": "^12.0",
         "laravel/pulse": "^1.2",
@@ -114,6 +114,11 @@
             "name": "daengdeni/location-module",
             "type": "vcs",
             "url": "https://git.putrakuningan.com/daengdeni/location"
+        },
+        {
+            "name": "jackiedo/log-reader",
+            "type": "vcs",
+            "url": "https://github.com/daengdeni/Laravel-Log-Reader.git"
         }
     ]
 }
