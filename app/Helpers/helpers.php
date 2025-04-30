@@ -5,8 +5,7 @@
         function formatTanggalWaktu($tanggal, $time=false, $showDay=false, $locale = 'id_ID')
         {
             // Parse tanggal dan waktu
-            $datetime = $time ? $tanggal . ' ' . $time : $tanggal;
-            $carbon = Carbon::parse($datetime)->locale($locale);
+            $carbon = Carbon::parse($tanggal)->locale($locale);
 
             // Tentukan format berdasarkan parameter
             if ($showDay && $time) {
