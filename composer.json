@@ -13,6 +13,7 @@
         "daengdeni/location-module": "dev-master",
         "daengdeni/logs-module": "^1.0",
         "daengdeni/usermanagement-module": "dev-master",
+        "daengdeni/webstatement-module": "dev-master",
         "diglactic/laravel-breadcrumbs": "^10.0",
         "jackiedo/log-reader": "^2.4",
         "joshbrw/laravel-module-installer": "^2.0",
@@ -124,6 +125,11 @@
             "name": "jackiedo/log-reader",
             "type": "vcs",
             "url": "https://github.com/daengdeni/Laravel-Log-Reader.git"
+        },
+        {
+            "name": "daengdeni/webstatement-module",
+            "type": "vcs",
+            "url": "https://git.putrakuningan.com/daengdeni/webstatement"
         }
     ]
 }
