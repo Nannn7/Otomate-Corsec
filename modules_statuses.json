@@ -1,8 +1,6 @@
 {
-    "Location": true,
     "Usermanagement": true,
     "Logs": true,
     "Authentication": true,
     "Basicdata": true,
-    "Webstatement": true
 }
