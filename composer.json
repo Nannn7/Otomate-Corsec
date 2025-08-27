@@ -10,17 +10,12 @@
         "daengdeni/authentication-module": "dev-master",
         "daengdeni/basicdata-module": "dev-master",
         "daengdeni/laravel-id-generator": "^1.0",
-        "daengdeni/location-module": "dev-master",
         "daengdeni/logs-module": "^1.0",
         "daengdeni/usermanagement-module": "dev-master",
-        "daengdeni/webstatement-module": "dev-master",
         "diglactic/laravel-breadcrumbs": "^10.0",
         "jackiedo/log-reader": "^2.4",
         "joshbrw/laravel-module-installer": "^2.0",
         "laravel/framework": "^12.0",
-        "laravel/pulse": "^1.2",
-        "laravel/telescope": "^5.7",
-        "laravel/tinker": "^2.9",
         "league/flysystem-sftp-v3": "^3.0",
         "maatwebsite/excel": "^3.1",
         "nwidart/laravel-modules": "^12",
@@ -31,14 +26,17 @@
         "spatie/laravel-permission": "^6.9",
         "tecnickcom/tcpdf": "^6.10",
         "webklex/laravel-pdfmerger": "^1.3",
-        "wildside/userstamps": "^3.0",
-        "yajra/laravel-oci8": "^12.0"
+        "wildside/userstamps": "^3.0"
     },
     "require-dev": {
         "deployer/deployer": "^7.4",
         "fakerphp/faker": "^1.23",
+        "laravel/boost": "^1.0",
         "laravel/pint": "^1.13",
+        "laravel/pulse": "^1.2",
         "laravel/sail": "^1.26",
+        "laravel/telescope": "^5.7",
+        "laravel/tinker": "^2.9",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.0",
         "phpunit/phpunit": "^12"
@@ -121,19 +119,9 @@
             "url": "https://git.putrakuningan.com/daengdeni/basicdata"
         },
         {
-            "name": "daengdeni/location-module",
-            "type": "vcs",
-            "url": "https://git.putrakuningan.com/daengdeni/location"
-        },
-        {
             "name": "jackiedo/log-reader",
             "type": "vcs",
             "url": "https://github.com/daengdeni/Laravel-Log-Reader.git"
-        },
-        {
-            "name": "daengdeni/webstatement-module",
-            "type": "vcs",
-            "url": "https://git.putrakuningan.com/daengdeni/webstatement"
         }
     ]
 }

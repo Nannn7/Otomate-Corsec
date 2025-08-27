@@ -1,5 +1,6 @@
 <?php
 
+    use Illuminate\Support\Str;
     use Carbon\Carbon;
 
     if (!function_exists('dateFormat')) {
