@@ -241,3 +241,5 @@
             return $roman_number;
         }
     }
+
+    include __DIR__ . '/hmac.php';
