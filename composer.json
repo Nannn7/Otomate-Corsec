@@ -10,10 +10,10 @@
         "daengdeni/authentication-module": "dev-master",
         "daengdeni/basicdata-module": "dev-master",
         "daengdeni/laravel-id-generator": "^1.0",
+        "daengdeni/log-reader": "^2.4",
         "daengdeni/logs-module": "^1.0",
         "daengdeni/usermanagement-module": "dev-master",
         "diglactic/laravel-breadcrumbs": "^10.0",
-        "jackiedo/log-reader": "^2.4",
         "joshbrw/laravel-module-installer": "^2.0",
         "laravel/framework": "^12.0",
         "league/flysystem-sftp-v3": "^3.0",
@@ -119,7 +119,7 @@
             "url": "https://git.putrakuningan.com/daengdeni/basicdata"
         },
         {
-            "name": "jackiedo/log-reader",
+            "name": "daengdeni/log-reader",
             "type": "vcs",
             "url": "https://github.com/daengdeni/Laravel-Log-Reader.git"
         }
