@@ -1,0 +1,125 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+    image: laravel12-php83
+    container_name: app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/99-custom.ini:ro
+    environment:
+      PHP_MEMORY_LIMIT: 512M
+      PHP_OPCACHE_VALIDATE_TIMESTAMPS: "1"
+    depends_on:
+      db-mysql:
+        condition: service_healthy
+        required: false
+      db-postgres:
+        condition: service_healthy
+        required: false
+      redis:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "php", "-v"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+  web:
+    image: nginx:1.27-alpine
+    container_name: web
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    depends_on:
+      app:
+        condition: service_started
+    volumes:
+      - ./:/var/www:ro
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+
+  # MySQL Database Service
+  db-mysql:
+    profiles: ["mysql"]
+    image: mysql:8.0
+    container_name: db-mysql
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password --log_bin_trust_function_creators=1
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: laravel
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - dbdata-mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-plaravel"]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+
+  # PostgreSQL Database Service
+  db-postgres:
+    profiles: ["postgres"]
+    image: postgres:15-alpine
+    container_name: db-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: laravel
+      POSTGRES_USER: laravel
+      POSTGRES_PASSWORD: laravel
+      POSTGRES_ROOT_PASSWORD: root
+    volumes:
+      - dbdata-postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U laravel -d laravel"]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+  queue:
+    profiles: ["worker"]
+    image: laravel12-php83
+    container_name: queue
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_started
+      redis:
+        condition: service_started
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www/html
+    command: php artisan queue:work --verbose --tries=3 --sleep=1
+
+  scheduler:
+    profiles: ["worker"]
+    image: laravel12-php83
+    container_name: scheduler
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_started
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    command: php artisan schedule:work
+
+volumes:
+  dbdata-mysql:
+  dbdata-postgres:
+
