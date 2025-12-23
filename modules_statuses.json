@@ -2,5 +2,6 @@
     "Usermanagement": true,
     "Logs": true,
     "Authentication": true,
-    "Basicdata": true
+    "Basicdata": true,
+    "Mombod": true
 }
