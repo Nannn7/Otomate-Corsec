@@ -10,7 +10,7 @@
     "require": {
         "php": "^8.3",
         "barryvdh/laravel-dompdf": "^3.0",
-        "daengdeni/mombod-module": "dev-main",
+        "daengdeni/corsec-module": "dev-main",
         "daengdeni/authentication-module": "dev-master",
         "daengdeni/basicdata-module": "dev-master",
         "daengdeni/laravel-id-generator": "^1.0",
@@ -116,9 +116,9 @@
             "url": "https://git.putrakuningan.com/daengdeni/basicdata"
         },
         {
-            "name": "daengdeni/mombod-module",
+            "name": "daengdeni/corsec-module",
             "type": "vcs",
-            "url": "https://git.putrakuningan.com/daengdeni/mombod"
+            "url": "https://git.putrakuningan.com/daengdeni/corsec"
         }
     ]
 }

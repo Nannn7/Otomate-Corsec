@@ -3,5 +3,6 @@
     "Logs": true,
     "Authentication": true,
     "Basicdata": true,
-    "Mombod": true
+    "Mombod": true,
+    "Corsec": true
 }
