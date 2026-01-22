@@ -33,4 +33,9 @@ Route::middleware(['auth'])->group(function () {
                 'count' => auth()->user()->unreadNotifications->count()
             ]);
         })->name('notifications.count')->middleware('auth');
+
+        Route::post('/notifications/read-all', function () {
+            auth()->user()->unreadNotifications->markAsRead();
+            return response()->json(['success' => true]);
+        })->name('notifications.read_all')->middleware('auth');
 });

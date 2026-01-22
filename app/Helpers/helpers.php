@@ -242,4 +242,61 @@
         }
     }
 
+    if (!function_exists('formatNotifikasi')) {
+        /**
+         * Format notification payload for UI rendering.
+         *
+         * @param \Illuminate\Notifications\DatabaseNotification $notification
+         * @return array{title:string,message:string}
+         */
+        function formatNotifikasi($notification)
+        {
+            $data = is_array($notification->data) ? $notification->data : [];
+            $title = (string) ($data['title'] ?? '');
+            $message = (string) ($data['message'] ?? '');
+
+            if ($title !== '' || $message !== '') {
+                return [
+                    'title' => $title !== '' ? $title : 'Notifikasi',
+                    'message' => $message !== '' ? $message : 'Ada notifikasi baru.',
+                ];
+            }
+
+            if (isset($data['incoming_letter_id'])) {
+                $subject = $data['subject'] ?? $data['registration_no'] ?? 'Surat masuk';
+                return [
+                    'title' => 'Surat masuk',
+                    'message' => 'Perlu tindak lanjut: ' . $subject,
+                ];
+            }
+
+            if (isset($data['outgoing_letter_id'])) {
+                $subject = $data['subject'] ?? $data['number'] ?? 'Surat keluar';
+                return [
+                    'title' => 'Surat keluar',
+                    'message' => 'Update proses: ' . $subject,
+                ];
+            }
+
+            if (isset($data['meeting_id'])) {
+                return [
+                    'title' => 'Meeting',
+                    'message' => $data['subject'] ?? 'Ada update meeting.',
+                ];
+            }
+
+            if (isset($data['workplan_id'])) {
+                return [
+                    'title' => 'Workplan',
+                    'message' => $data['title'] ?? 'Ada update workplan.',
+                ];
+            }
+
+            return [
+                'title' => 'Notifikasi',
+                'message' => 'Ada notifikasi baru.',
+            ];
+        }
+    }
+
     include __DIR__ . '/hmac.php';

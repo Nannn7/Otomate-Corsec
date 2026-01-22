@@ -27,14 +27,21 @@
         </div>
 
         <div class="flex items-center gap-2 lg:gap-3.5">
+            @php
+                $unreadCount = auth()->user()->unreadNotifications->count();
+            @endphp
             <div class="dropdown" data-dropdown="true" data-dropdown-offset="70px, 10px" data-dropdown-placement="bottom-end"
                  data-dropdown-trigger="click|lg:click">
                 <button
                     class="dropdown-toggle btn btn-icon btn-icon-lg relative cursor-pointer size-9 rounded-full hover:bg-primary-light hover:text-primary dropdown-open:bg-primary-light dropdown-open:text-primary text-gray-500">
                     <i class="ki-filled ki-notification-on">
                     </i>
-                    <span class="badge badge-dot badge-success size-[5px] absolute top-0.5 right-0.5 transform translate-y-1/2">
-                    </span>
+                    @if ($unreadCount > 0)
+                        <span
+                            class="badge badge-xs badge-danger absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center">
+                            {{ $unreadCount }}
+                        </span>
+                    @endif
                 </button>
                 <div class="dropdown-content light:border-gray-300 w-full max-w-[460px]">
                     <div class="flex items-center justify-between gap-2.5 text-sm text-gray-900 font-semibold px-5 py-2.5"
@@ -52,7 +59,7 @@
                         <div class="scrollable-y-auto" data-scrollable="true" data-scrollable-dependencies="#header"
                              data-scrollable-max-height="auto" data-scrollable-offset="200px">
                             <div class="flex flex-col gap-5 py-5 divider-y divider-gray-200">
-                                @foreach (auth()->user()->unreadNotifications as $notification)
+                                @forelse (auth()->user()->unreadNotifications as $notification)
                                     <div class="flex items-center grow gap-2.5 px-5">
                                         <div
                                             class="flex items-center justify-center size-8 bg-success-light rounded-full border border-success-clarity">
@@ -73,7 +80,11 @@
                                     @if(!$loop->last)
                                     <div class="border-b border-b-gray-200"></div>
                                     @endif
-                                @endforeach
+                                @empty
+                                    <div class="flex items-center justify-center px-5 text-sm text-gray-500">
+                                        Belum ada notifikasi baru.
+                                    </div>
+                                @endforelse
 
                                     <!-- Notification sound -->
                                     <audio id="notification-sound" style="display: none;">
@@ -85,7 +96,8 @@
                         <div class="border-b border-b-gray-200">
                         </div>
                         <div class="grid grid-cols-2 p-5 gap-2.5" id="notifications_all_footer">
-                            <button class="btn btn-sm btn-light justify-center">
+                            <button class="btn btn-sm btn-light justify-center" id="mark-notifications-read"
+                                data-read-url="{{ route('notifications.read_all') }}">
                                 Mark all as read
                             </button>
                         </div>
@@ -166,8 +178,10 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Initial count of unread notifications
-            let previousNotificationCount = {{ auth()->user()->unreadNotifications->count() }};
+            let previousNotificationCount = {{ $unreadCount }};
             const notificationSound = document.getElementById('notification-sound');
+            const markReadButton = document.getElementById('mark-notifications-read');
+            const markReadUrl = markReadButton ? markReadButton.dataset.readUrl : null;
 
             // Play sound if there are unread notifications on page load
             if (previousNotificationCount > 0 && notificationSound) {
@@ -239,6 +253,18 @@
 
             // Check for new notifications every 30 seconds
             setInterval(checkForNewNotifications, 5000);
+
+            if (markReadButton && markReadUrl) {
+                markReadButton.addEventListener('click', function() {
+                    fetch(markReadUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    }).then(() => window.location.reload());
+                });
+            }
         });
     </script>
 @endpush
