@@ -4,11 +4,16 @@ use Illuminate\Support\Facades\Route;
 use Modules\Corsec\Models\IncomingLetter;
 use Modules\Corsec\Models\Meeting;
 use Modules\Corsec\Models\OutgoingLetter;
+use Modules\Corsec\Models\WorkProgram;
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/', function () {
         $incomingOpen = IncomingLetter::query()
-            ->whereNotIn('status', ['verified'])
+            ->whereNotIn('status', [
+                IncomingLetter::STATUS_VERIFIED,
+                IncomingLetter::STATUS_REJECTED,
+                IncomingLetter::STATUS_RETURNED,
+            ])
             ->count();
 
         $outgoingOpen = OutgoingLetter::query()
@@ -25,7 +30,14 @@ Route::middleware(['auth'])->group(function () {
             })
             ->count();
 
-        return view('welcome', compact('incomingOpen', 'outgoingOpen', 'meetingOpen'));
+        $workplanOpen = WorkProgram::query()
+            ->where(function ($q) {
+                $q->whereNull('status')
+                    ->orWhereNotIn('status', ['done', 'returned', 'rejected']);
+            })
+            ->count();
+
+        return view('welcome', compact('incomingOpen', 'outgoingOpen', 'meetingOpen', 'workplanOpen'));
     })->name('dashboard');
 
         Route::get('/notifications/count', function () {
