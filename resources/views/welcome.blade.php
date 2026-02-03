@@ -7,7 +7,7 @@
                 <div>
                     <div class="text-sm font-semibold text-amber-700">Incoming Letter belum selesai</div>
                     <div class="text-sm text-gray-700">
-                        Ada {{ $incomingOpen }} surat yang belum sampai status verified/rejected/returned.
+                        Ada {{ $incomingOpen }} surat yang perlu tindak lanjut.
                     </div>
                 </div>
                 <a href="{{ route('letter.incoming.index') }}" class="btn btn-sm btn-warning">Lihat</a>
@@ -20,7 +20,7 @@
                 <div>
                     <div class="text-sm font-semibold text-amber-700">Outgoing Letter belum selesai</div>
                     <div class="text-sm text-gray-700">
-                        Ada {{ $outgoingOpen }} surat yang belum final.
+                        Ada {{ $outgoingOpen }} surat yang perlu tindak lanjut.
                     </div>
                 </div>
                 <a href="{{ route('letter.outgoing.index') }}" class="btn btn-sm btn-warning">Lihat</a>
@@ -33,7 +33,7 @@
                 <div>
                     <div class="text-sm font-semibold text-amber-700">Meeting belum selesai</div>
                     <div class="text-sm text-gray-700">
-                        Ada {{ $meetingOpen }} meeting yang belum final.
+                        Ada {{ $meetingOpen }} meeting yang perlu tindak lanjut.
                     </div>
                 </div>
                 <a href="{{ route('meeting.index') }}" class="btn btn-sm btn-warning">Lihat</a>
@@ -46,7 +46,7 @@
                 <div>
                     <div class="text-sm font-semibold text-amber-700">Work Plan belum selesai</div>
                     <div class="text-sm text-gray-700">
-                        Ada {{ $workplanOpen }} work plan yang belum final.
+                        Ada {{ $workplanOpen }} work plan yang perlu tindak lanjut.
                     </div>
                 </div>
                 <a href="{{ route('workplan.index') }}" class="btn btn-sm btn-warning">Lihat</a>
@@ -61,7 +61,7 @@
             </div>
             <div class="card-body">
                 <div class="text-3xl font-semibold text-gray-800">{{ $incomingOpen ?? 0 }}</div>
-                <div class="text-gray-500 text-sm">Belum final</div>
+                <div class="text-gray-500 text-sm">Pending</div>
             </div>
         </div>
         <div class="card">
@@ -70,7 +70,7 @@
             </div>
             <div class="card-body">
                 <div class="text-3xl font-semibold text-gray-800">{{ $outgoingOpen ?? 0 }}</div>
-                <div class="text-gray-500 text-sm">Belum final</div>
+                <div class="text-gray-500 text-sm">Pending</div>
             </div>
         </div>
         <div class="card">
@@ -79,7 +79,7 @@
             </div>
             <div class="card-body">
                 <div class="text-3xl font-semibold text-gray-800">{{ $meetingOpen ?? 0 }}</div>
-                <div class="text-gray-500 text-sm">Belum final</div>
+                <div class="text-gray-500 text-sm">Pending</div>
             </div>
         </div>
     </div>

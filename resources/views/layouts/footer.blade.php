@@ -20,7 +20,7 @@
                 <a class="hover:text-primary" href="#">
                     Support
                 </a>
-                <a class="hover:text-primary" href="#">
+                <a class="hover:text-primary" href="https://www.linkedin.com/in/nanda-surya-diffa-194209163">
                     Developer
                 </a>
             </nav>
