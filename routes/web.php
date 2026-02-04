@@ -41,8 +41,30 @@ Route::middleware(['auth'])->group(function () {
     })->name('dashboard');
 
         Route::get('/notifications/count', function () {
+            $user = auth()->user();
+            $notifications = $user?->unreadNotifications ?? collect();
+            $incomingIds = $notifications
+                ->pluck('data.incoming_letter_id')
+                ->filter()
+                ->unique()
+                ->values();
+            $incomingStatusMap = $incomingIds->isEmpty()
+                ? collect()
+                : IncomingLetter::query()
+                    ->whereIn('id', $incomingIds)
+                    ->pluck('status', 'id');
+
+            $count = $notifications->filter(function ($notification) use ($incomingStatusMap) {
+                $incomingId = $notification->data['incoming_letter_id'] ?? null;
+                if (!$incomingId) {
+                    return true;
+                }
+                $status = $incomingStatusMap->get((string) $incomingId);
+                return $status !== IncomingLetter::STATUS_VERIFIED;
+            })->count();
+
             return response()->json([
-                'count' => auth()->user()->unreadNotifications->count()
+                'count' => $count
             ]);
         })->name('notifications.count')->middleware('auth');
 

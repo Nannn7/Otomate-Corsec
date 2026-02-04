@@ -20,6 +20,14 @@ window.CorsecIncomingValidation = window.CorsecIncomingValidation || (() => {
         if ($field.length === 0) {
             $field = $form.find(`[name="${normalized}"]`);
         }
+        if ($field.length > 1) {
+            const $visible = $field.filter(':visible');
+            if ($visible.length > 0) {
+                $field = $visible.first();
+            } else {
+                $field = $field.first();
+            }
+        }
         if ($field.length === 0 && (fieldName.startsWith('files') || fieldName.startsWith('evidence_files'))) {
             $field = $form.find('[name="files[]"], [name="evidence_files[]"]');
         }

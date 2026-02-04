@@ -28,7 +28,27 @@
 
         <div class="flex items-center gap-2 lg:gap-3.5">
             @php
-                $unreadCount = auth()->user()->unreadNotifications->count();
+                $user = auth()->user();
+                $unreadNotifications = $user?->unreadNotifications ?? collect();
+                $incomingIds = $unreadNotifications
+                    ->pluck('data.incoming_letter_id')
+                    ->filter()
+                    ->unique()
+                    ->values();
+                $incomingStatusMap = $incomingIds->isEmpty()
+                    ? collect()
+                    : \Modules\Corsec\Models\IncomingLetter::query()
+                        ->whereIn('id', $incomingIds)
+                        ->pluck('status', 'id');
+                $filteredNotifications = $unreadNotifications->filter(function ($notification) use ($incomingStatusMap) {
+                    $incomingId = $notification->data['incoming_letter_id'] ?? null;
+                    if (!$incomingId) {
+                        return true;
+                    }
+                    $status = $incomingStatusMap->get((string) $incomingId);
+                    return $status !== \Modules\Corsec\Models\IncomingLetter::STATUS_VERIFIED;
+                })->values();
+                $unreadCount = $filteredNotifications->count();
             @endphp
             <div class="dropdown" data-dropdown="true" data-dropdown-offset="70px, 10px" data-dropdown-placement="bottom-end"
                  data-dropdown-trigger="click|lg:click">
@@ -59,7 +79,7 @@
                         <div class="scrollable-y-auto" data-scrollable="true" data-scrollable-dependencies="#header"
                              data-scrollable-max-height="auto" data-scrollable-offset="200px">
                             <div class="flex flex-col gap-5 py-5 divider-y divider-gray-200">
-                                @forelse (auth()->user()->unreadNotifications as $notification)
+                                @forelse ($filteredNotifications as $notification)
                                     <div class="flex items-center grow gap-2.5 px-5">
                                         <div
                                             class="flex items-center justify-center size-8 bg-success-light rounded-full border border-success-clarity">
