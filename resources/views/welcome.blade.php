@@ -44,9 +44,9 @@
         <div class="card border-l-4 border-amber-400 bg-amber-50">
             <div class="card-body flex items-center justify-between gap-4">
                 <div>
-                    <div class="text-sm font-semibold text-amber-700">Work Plan belum selesai</div>
+                    <div class="text-sm font-semibold text-amber-700">Item Work Plan belum selesai</div>
                     <div class="text-sm text-gray-700">
-                        Ada {{ $workplanOpen }} work plan yang perlu tindak lanjut.
+                        Ada {{ $workplanOpen }} item work plan yang perlu tindak lanjut.
                     </div>
                 </div>
                 <a href="{{ route('workplan.index') }}" class="btn btn-sm btn-warning">Lihat</a>
