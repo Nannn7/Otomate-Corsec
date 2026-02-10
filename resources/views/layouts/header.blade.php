@@ -30,21 +30,81 @@
             @php
                 $user = auth()->user();
                 $unreadNotifications = $user?->unreadNotifications ?? collect();
+
                 $incomingIds = $unreadNotifications
                     ->pluck('data.incoming_letter_id')
                     ->filter()
                     ->unique()
                     ->values();
+                $outgoingIds = $unreadNotifications
+                    ->pluck('data.outgoing_letter_id')
+                    ->filter()
+                    ->unique()
+                    ->values();
+                $workplanIds = $unreadNotifications
+                    ->map(function ($notification) {
+                        $data = is_array($notification->data) ? $notification->data : [];
+                        return $data['work_program_id'] ?? $data['workplan_id'] ?? null;
+                    })
+                    ->filter()
+                    ->unique()
+                    ->values();
+                $meetingIds = $unreadNotifications
+                    ->pluck('data.meeting_id')
+                    ->filter()
+                    ->unique()
+                    ->values();
+
                 $incomingStatusMap = $incomingIds->isEmpty()
                     ? collect()
                     : \Modules\Corsec\Models\IncomingLetter::query()
                         ->whereIn('id', $incomingIds)
                         ->pluck('status', 'id');
-                $filteredNotifications = $unreadNotifications->filter(function ($notification) use ($incomingStatusMap) {
-                    $incomingId = $notification->data['incoming_letter_id'] ?? null;
+                $outgoingStatusMap = $outgoingIds->isEmpty()
+                    ? collect()
+                    : \Modules\Corsec\Models\OutgoingLetter::query()
+                        ->whereIn('id', $outgoingIds)
+                        ->pluck('status', 'id');
+                $workplanStatusMap = $workplanIds->isEmpty()
+                    ? collect()
+                    : \Modules\Corsec\Models\WorkProgram::query()
+                        ->whereIn('id', $workplanIds)
+                        ->pluck('status', 'id');
+                $meetingStatusMap = $meetingIds->isEmpty()
+                    ? collect()
+                    : \Modules\Corsec\Models\Meeting::query()
+                        ->whereIn('id', $meetingIds)
+                        ->pluck('status', 'id');
+
+                $filteredNotifications = $unreadNotifications->filter(function ($notification) use (
+                    $incomingStatusMap,
+                    $outgoingStatusMap,
+                    $workplanStatusMap,
+                    $meetingStatusMap
+                ) {
+                    $data = is_array($notification->data) ? $notification->data : [];
+
+                    $incomingId = $data['incoming_letter_id'] ?? null;
                     if (!$incomingId) {
-                        return true;
+                        $outgoingId = $data['outgoing_letter_id'] ?? null;
+                        if (!$outgoingId) {
+                            $workplanId = $data['work_program_id'] ?? $data['workplan_id'] ?? null;
+                            if (!$workplanId) {
+                                $meetingId = $data['meeting_id'] ?? null;
+                                if (!$meetingId) {
+                                    return true;
+                                }
+
+                                $meetingStatus = $meetingStatusMap->get((string) $meetingId);
+                                return !in_array((string) $meetingStatus, ['done', 'completed', 'closed', 'verified'], true);
+                            }
+
+                            return $workplanStatusMap->get((string) $workplanId) !== \Modules\Corsec\Models\WorkProgram::STATUS_DONE;
+                        }
+
+                        return $outgoingStatusMap->get((string) $outgoingId) !== \Modules\Corsec\Models\OutgoingLetter::STATUS_VERIFIED;
                     }
+
                     $status = $incomingStatusMap->get((string) $incomingId);
                     return $status !== \Modules\Corsec\Models\IncomingLetter::STATUS_VERIFIED;
                 })->values();

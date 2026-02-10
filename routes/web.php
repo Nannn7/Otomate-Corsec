@@ -43,24 +43,82 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/notifications/count', function () {
             $user = auth()->user();
             $notifications = $user?->unreadNotifications ?? collect();
+
             $incomingIds = $notifications
                 ->pluck('data.incoming_letter_id')
                 ->filter()
                 ->unique()
                 ->values();
+            $outgoingIds = $notifications
+                ->pluck('data.outgoing_letter_id')
+                ->filter()
+                ->unique()
+                ->values();
+            $workplanIds = $notifications
+                ->map(function ($notification) {
+                    $data = is_array($notification->data) ? $notification->data : [];
+                    return $data['work_program_id'] ?? $data['workplan_id'] ?? null;
+                })
+                ->filter()
+                ->unique()
+                ->values();
+            $meetingIds = $notifications
+                ->pluck('data.meeting_id')
+                ->filter()
+                ->unique()
+                ->values();
+
             $incomingStatusMap = $incomingIds->isEmpty()
                 ? collect()
                 : IncomingLetter::query()
                     ->whereIn('id', $incomingIds)
                     ->pluck('status', 'id');
+            $outgoingStatusMap = $outgoingIds->isEmpty()
+                ? collect()
+                : OutgoingLetter::query()
+                    ->whereIn('id', $outgoingIds)
+                    ->pluck('status', 'id');
+            $workplanStatusMap = $workplanIds->isEmpty()
+                ? collect()
+                : WorkProgram::query()
+                    ->whereIn('id', $workplanIds)
+                    ->pluck('status', 'id');
+            $meetingStatusMap = $meetingIds->isEmpty()
+                ? collect()
+                : Meeting::query()
+                    ->whereIn('id', $meetingIds)
+                    ->pluck('status', 'id');
 
-            $count = $notifications->filter(function ($notification) use ($incomingStatusMap) {
-                $incomingId = $notification->data['incoming_letter_id'] ?? null;
-                if (!$incomingId) {
-                    return true;
+            $count = $notifications->filter(function ($notification) use (
+                $incomingStatusMap,
+                $outgoingStatusMap,
+                $workplanStatusMap,
+                $meetingStatusMap
+            ) {
+                $data = is_array($notification->data) ? $notification->data : [];
+
+                $incomingId = $data['incoming_letter_id'] ?? null;
+                if ($incomingId) {
+                    return $incomingStatusMap->get((string) $incomingId) !== IncomingLetter::STATUS_VERIFIED;
                 }
-                $status = $incomingStatusMap->get((string) $incomingId);
-                return $status !== IncomingLetter::STATUS_VERIFIED;
+
+                $outgoingId = $data['outgoing_letter_id'] ?? null;
+                if ($outgoingId) {
+                    return $outgoingStatusMap->get((string) $outgoingId) !== OutgoingLetter::STATUS_VERIFIED;
+                }
+
+                $workplanId = $data['work_program_id'] ?? $data['workplan_id'] ?? null;
+                if ($workplanId) {
+                    return $workplanStatusMap->get((string) $workplanId) !== WorkProgram::STATUS_DONE;
+                }
+
+                $meetingId = $data['meeting_id'] ?? null;
+                if ($meetingId) {
+                    $meetingStatus = $meetingStatusMap->get((string) $meetingId);
+                    return !in_array((string) $meetingStatus, ['done', 'completed', 'closed', 'verified'], true);
+                }
+
+                return true;
             })->count();
 
             return response()->json([

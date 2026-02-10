@@ -281,14 +281,14 @@
             if (isset($data['meeting_id'])) {
                 return [
                     'title' => 'Meeting',
-                    'message' => $data['subject'] ?? 'Ada update meeting.',
+                    'message' => $data['meeting_title'] ?? $data['subject'] ?? 'Ada update meeting.',
                 ];
             }
 
-            if (isset($data['workplan_id'])) {
+            if (isset($data['work_program_id']) || isset($data['workplan_id'])) {
                 return [
                     'title' => 'Workplan',
-                    'message' => $data['title'] ?? 'Ada update workplan.',
+                    'message' => $data['work_program_title'] ?? $data['title'] ?? 'Ada update workplan.',
                 ];
             }
 
