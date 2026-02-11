@@ -29,85 +29,10 @@
         <div class="flex items-center gap-2 lg:gap-3.5">
             @php
                 $user = auth()->user();
-                $unreadNotifications = $user?->unreadNotifications ?? collect();
-
-                $incomingIds = $unreadNotifications
-                    ->pluck('data.incoming_letter_id')
-                    ->filter()
-                    ->unique()
-                    ->values();
-                $outgoingIds = $unreadNotifications
-                    ->pluck('data.outgoing_letter_id')
-                    ->filter()
-                    ->unique()
-                    ->values();
-                $workplanIds = $unreadNotifications
-                    ->map(function ($notification) {
-                        $data = is_array($notification->data) ? $notification->data : [];
-                        return $data['work_program_id'] ?? $data['workplan_id'] ?? null;
-                    })
-                    ->filter()
-                    ->unique()
-                    ->values();
-                $meetingIds = $unreadNotifications
-                    ->pluck('data.meeting_id')
-                    ->filter()
-                    ->unique()
-                    ->values();
-
-                $incomingStatusMap = $incomingIds->isEmpty()
-                    ? collect()
-                    : \Modules\Corsec\Models\IncomingLetter::query()
-                        ->whereIn('id', $incomingIds)
-                        ->pluck('status', 'id');
-                $outgoingStatusMap = $outgoingIds->isEmpty()
-                    ? collect()
-                    : \Modules\Corsec\Models\OutgoingLetter::query()
-                        ->whereIn('id', $outgoingIds)
-                        ->pluck('status', 'id');
-                $workplanStatusMap = $workplanIds->isEmpty()
-                    ? collect()
-                    : \Modules\Corsec\Models\WorkProgram::query()
-                        ->whereIn('id', $workplanIds)
-                        ->pluck('status', 'id');
-                $meetingStatusMap = $meetingIds->isEmpty()
-                    ? collect()
-                    : \Modules\Corsec\Models\Meeting::query()
-                        ->whereIn('id', $meetingIds)
-                        ->pluck('status', 'id');
-
-                $filteredNotifications = $unreadNotifications->filter(function ($notification) use (
-                    $incomingStatusMap,
-                    $outgoingStatusMap,
-                    $workplanStatusMap,
-                    $meetingStatusMap
-                ) {
-                    $data = is_array($notification->data) ? $notification->data : [];
-
-                    $incomingId = $data['incoming_letter_id'] ?? null;
-                    if (!$incomingId) {
-                        $outgoingId = $data['outgoing_letter_id'] ?? null;
-                        if (!$outgoingId) {
-                            $workplanId = $data['work_program_id'] ?? $data['workplan_id'] ?? null;
-                            if (!$workplanId) {
-                                $meetingId = $data['meeting_id'] ?? null;
-                                if (!$meetingId) {
-                                    return true;
-                                }
-
-                                $meetingStatus = $meetingStatusMap->get((string) $meetingId);
-                                return !in_array((string) $meetingStatus, ['done', 'completed', 'closed', 'verified'], true);
-                            }
-
-                            return $workplanStatusMap->get((string) $workplanId) !== \Modules\Corsec\Models\WorkProgram::STATUS_DONE;
-                        }
-
-                        return $outgoingStatusMap->get((string) $outgoingId) !== \Modules\Corsec\Models\OutgoingLetter::STATUS_VERIFIED;
-                    }
-
-                    $status = $incomingStatusMap->get((string) $incomingId);
-                    return $status !== \Modules\Corsec\Models\IncomingLetter::STATUS_VERIFIED;
-                })->values();
+                $unreadNotifications = $user
+                    ? $user->unreadNotifications()->latest()->get()
+                    : collect();
+                $filteredNotifications = corsecFilterActionableNotifications($unreadNotifications);
                 $unreadCount = $filteredNotifications->count();
             @endphp
             <div class="dropdown" data-dropdown="true" data-dropdown-offset="70px, 10px" data-dropdown-placement="bottom-end"
@@ -116,12 +41,10 @@
                     class="dropdown-toggle btn btn-icon btn-icon-lg relative cursor-pointer size-9 rounded-full hover:bg-primary-light hover:text-primary dropdown-open:bg-primary-light dropdown-open:text-primary text-gray-500">
                     <i class="ki-filled ki-notification-on">
                     </i>
-                    @if ($unreadCount > 0)
-                        <span
-                            class="badge badge-xs badge-danger absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center">
-                            {{ $unreadCount }}
-                        </span>
-                    @endif
+                    <span id="notification-badge"
+                        class="badge badge-xs badge-danger absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center {{ $unreadCount > 0 ? '' : 'hidden' }}">
+                        {{ $unreadCount > 0 ? $unreadCount : '' }}
+                    </span>
                 </button>
                 <div class="dropdown-content light:border-gray-300 w-full max-w-[460px]">
                     <div class="flex items-center justify-between gap-2.5 text-sm text-gray-900 font-semibold px-5 py-2.5"
@@ -138,7 +61,7 @@
                     <div class="flex flex-col">
                         <div class="scrollable-y-auto" data-scrollable="true" data-scrollable-dependencies="#header"
                              data-scrollable-max-height="auto" data-scrollable-offset="200px">
-                            <div class="flex flex-col gap-5 py-5 divider-y divider-gray-200">
+                            <div class="flex flex-col gap-5 py-5 divider-y divider-gray-200" id="notifications-list">
                                 @forelse ($filteredNotifications as $notification)
                                     <div class="flex items-center grow gap-2.5 px-5">
                                         <div
@@ -177,7 +100,8 @@
                         </div>
                         <div class="grid grid-cols-2 p-5 gap-2.5" id="notifications_all_footer">
                             <button class="btn btn-sm btn-light justify-center" id="mark-notifications-read"
-                                data-read-url="{{ route('notifications.read_all') }}">
+                                data-read-url="{{ route('notifications.read_all') }}"
+                                data-list-url="{{ route('notifications.list') }}">
                                 Mark all as read
                             </button>
                         </div>
@@ -257,92 +181,149 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Initial count of unread notifications
             let previousNotificationCount = {{ $unreadCount }};
             const notificationSound = document.getElementById('notification-sound');
             const markReadButton = document.getElementById('mark-notifications-read');
+            const notificationList = document.getElementById('notifications-list');
+            const notificationBadge = document.getElementById('notification-badge');
             const markReadUrl = markReadButton ? markReadButton.dataset.readUrl : null;
+            const listUrl = markReadButton ? markReadButton.dataset.listUrl : null;
 
-            // Play sound if there are unread notifications on page load
             if (previousNotificationCount > 0 && notificationSound) {
-                // Set a flag in localStorage to track if sound has been played in this session
                 const soundPlayed = localStorage.getItem('notification_sound_played');
 
                 if (!soundPlayed) {
-                    // Play the notification sound
                     notificationSound.play().catch(error => {
                         console.error('Error playing notification sound:', error);
                     });
 
-                    // Set the flag to prevent playing the sound again in this session
                     localStorage.setItem('notification_sound_played', 'true');
 
-                    // Clear the flag after 5 minutes to allow sound to play again if user refreshes
                     setTimeout(() => {
                         localStorage.removeItem('notification_sound_played');
                     }, 5 * 60 * 1000);
                 }
             }
 
-            // Function to check for new notifications
-            function checkForNewNotifications() {
-                fetch('{{ route("notifications.count") }}')
+            function escapeHtml(str) {
+                return String(str ?? '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }
+
+            function renderBadge(count) {
+                if (!notificationBadge) {
+                    return;
+                }
+
+                if (count > 0) {
+                    notificationBadge.textContent = String(count);
+                    notificationBadge.classList.remove('hidden');
+                } else {
+                    notificationBadge.textContent = '';
+                    notificationBadge.classList.add('hidden');
+                }
+            }
+
+            function renderNotifications(items) {
+                if (!notificationList) {
+                    return;
+                }
+
+                if (!Array.isArray(items) || items.length === 0) {
+                    notificationList.innerHTML = `
+                        <div class="flex items-center justify-center px-5 text-sm text-gray-500">
+                            Belum ada notifikasi baru.
+                        </div>
+                    `;
+                    return;
+                }
+
+                const html = items.map((item, index) => {
+                    const title = escapeHtml(item.title || 'Notifikasi');
+                    const message = escapeHtml(item.message || 'Ada notifikasi baru.');
+                    const createdHuman = escapeHtml(item.created_human || '-');
+                    const divider = index < items.length - 1
+                        ? '<div class="border-b border-b-gray-200"></div>'
+                        : '';
+
+                    return `
+                        <div class="flex items-center grow gap-2.5 px-5">
+                            <div class="flex items-center justify-center size-8 bg-success-light rounded-full border border-success-clarity">
+                                <i class="ki-filled ki-check text-lg text-success"></i>
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <span class="text-2sm font-medium text-gray-700">
+                                    ${title}<br>
+                                    ${message}<br>
+                                </span>
+                                <span class="font-medium text-gray-500 text-2xs">${createdHuman}</span>
+                            </div>
+                        </div>
+                        ${divider}
+                    `;
+                }).join('');
+
+                notificationList.innerHTML = html;
+            }
+
+            function loadNotifications(playSound = false) {
+                if (!listUrl) {
+                    return Promise.resolve();
+                }
+
+                return fetch(listUrl, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
                     .then(response => response.json())
                     .then(data => {
-                        const currentCount = data.count;
+                        const currentCount = Number(data.count || 0);
+                        renderBadge(currentCount);
+                        renderNotifications(Array.isArray(data.notifications) ? data.notifications : []);
 
-                        // If there are more notifications than before, play the sound
-                        if (currentCount > previousNotificationCount) {
-                            // Play notification sound
-                            if (notificationSound) {
-                                setTimeout(() => {
-                                    window.location.reload();
-                                },5000);
-                                notificationSound.play().catch(error => {
-                                    console.error('Error playing notification sound:', error);
-                                });
-                            }
-
-                            // Update the notification UI (optional)
-                            updateNotificationUI(currentCount);
+                        if (playSound && currentCount > previousNotificationCount && notificationSound) {
+                            notificationSound.play().catch(error => {
+                                console.error('Error playing notification sound:', error);
+                            });
                         }
 
-                        // Update the previous count
                         previousNotificationCount = currentCount;
                     })
                     .catch(error => {
-                        console.error('Error checking for notifications:', error);
+                        console.error('Error loading notifications:', error);
                     });
             }
 
-            // Function to update notification UI (optional)
-            function updateNotificationUI(count) {
-                // Update notification badge or UI elements if needed
-                const badge = document.querySelector('.badge-dot.badge-success');
-                if (badge) {
-                    // Make the badge more visible when new notifications arrive
-                    badge.classList.add('animate-pulse');
-                    setTimeout(() => {
-                        badge.classList.remove('animate-pulse');
-                    }, 3000);
-                }
-
-                // You might want to refresh the notification list here
-                // This would require an additional endpoint to fetch the latest notifications
-            }
-
-            // Check for new notifications every 30 seconds
-            setInterval(checkForNewNotifications, 5000);
+            loadNotifications(false);
+            setInterval(() => loadNotifications(true), 5000);
 
             if (markReadButton && markReadUrl) {
                 markReadButton.addEventListener('click', function() {
+                    markReadButton.disabled = true;
                     fetch(markReadUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         }
-                    }).then(() => window.location.reload());
+                    })
+                        .then(response => response.json())
+                        .then(() => {
+                            previousNotificationCount = 0;
+                            renderBadge(0);
+                            renderNotifications([]);
+                        })
+                        .catch(error => {
+                            console.error('Error marking notifications as read:', error);
+                        })
+                        .finally(() => {
+                            markReadButton.disabled = false;
+                        });
                 });
             }
         });

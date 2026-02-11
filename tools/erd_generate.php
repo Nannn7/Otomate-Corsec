@@ -25,7 +25,6 @@ $columns = [
         'corsec_incoming_letter_directorates',
         'corsec_senders',
         'corsec_letter_types',
-        'corsec_banks',
         'corsec_letter_numbers',
         'corsec_outgoing_letters',
         'corsec_outgoing_letter_number_requests',
@@ -64,7 +63,6 @@ $edges = [
     ['corsec_incoming_letters', 'corsec_directorates'],
     ['corsec_incoming_letters', 'corsec_senders'],
     ['corsec_incoming_letters', 'corsec_letter_types'],
-    ['corsec_incoming_letters', 'corsec_banks'],
     ['corsec_incoming_letters', 'branches'],
 
     ['corsec_incoming_letter_routes', 'corsec_incoming_letters'],

@@ -42,92 +42,66 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/notifications/count', function () {
             $user = auth()->user();
-            $notifications = $user?->unreadNotifications ?? collect();
+            if (!$user) {
+                return response()->json(['count' => 0]);
+            }
 
-            $incomingIds = $notifications
-                ->pluck('data.incoming_letter_id')
-                ->filter()
-                ->unique()
-                ->values();
-            $outgoingIds = $notifications
-                ->pluck('data.outgoing_letter_id')
-                ->filter()
-                ->unique()
-                ->values();
-            $workplanIds = $notifications
-                ->map(function ($notification) {
-                    $data = is_array($notification->data) ? $notification->data : [];
-                    return $data['work_program_id'] ?? $data['workplan_id'] ?? null;
-                })
-                ->filter()
-                ->unique()
-                ->values();
-            $meetingIds = $notifications
-                ->pluck('data.meeting_id')
-                ->filter()
-                ->unique()
-                ->values();
+            $unreadNotifications = $user->unreadNotifications()->latest()->get();
+            corsecAutoReadResolvedNotifications($unreadNotifications);
 
-            $incomingStatusMap = $incomingIds->isEmpty()
-                ? collect()
-                : IncomingLetter::query()
-                    ->whereIn('id', $incomingIds)
-                    ->pluck('status', 'id');
-            $outgoingStatusMap = $outgoingIds->isEmpty()
-                ? collect()
-                : OutgoingLetter::query()
-                    ->whereIn('id', $outgoingIds)
-                    ->pluck('status', 'id');
-            $workplanStatusMap = $workplanIds->isEmpty()
-                ? collect()
-                : WorkProgram::query()
-                    ->whereIn('id', $workplanIds)
-                    ->pluck('status', 'id');
-            $meetingStatusMap = $meetingIds->isEmpty()
-                ? collect()
-                : Meeting::query()
-                    ->whereIn('id', $meetingIds)
-                    ->pluck('status', 'id');
-
-            $count = $notifications->filter(function ($notification) use (
-                $incomingStatusMap,
-                $outgoingStatusMap,
-                $workplanStatusMap,
-                $meetingStatusMap
-            ) {
-                $data = is_array($notification->data) ? $notification->data : [];
-
-                $incomingId = $data['incoming_letter_id'] ?? null;
-                if ($incomingId) {
-                    return $incomingStatusMap->get((string) $incomingId) !== IncomingLetter::STATUS_VERIFIED;
-                }
-
-                $outgoingId = $data['outgoing_letter_id'] ?? null;
-                if ($outgoingId) {
-                    return $outgoingStatusMap->get((string) $outgoingId) !== OutgoingLetter::STATUS_VERIFIED;
-                }
-
-                $workplanId = $data['work_program_id'] ?? $data['workplan_id'] ?? null;
-                if ($workplanId) {
-                    return $workplanStatusMap->get((string) $workplanId) !== WorkProgram::STATUS_DONE;
-                }
-
-                $meetingId = $data['meeting_id'] ?? null;
-                if ($meetingId) {
-                    $meetingStatus = $meetingStatusMap->get((string) $meetingId);
-                    return !in_array((string) $meetingStatus, ['done', 'completed', 'closed', 'verified'], true);
-                }
-
-                return true;
-            })->count();
+            $unreadNotifications = $user->unreadNotifications()->latest()->get();
+            $filteredNotifications = corsecFilterActionableNotifications($unreadNotifications);
 
             return response()->json([
-                'count' => $count
+                'count' => $filteredNotifications->count(),
             ]);
         })->name('notifications.count')->middleware('auth');
 
+        Route::get('/notifications/list', function () {
+            $user = auth()->user();
+            if (!$user) {
+                return response()->json([
+                    'count' => 0,
+                    'notifications' => [],
+                ]);
+            }
+
+            $unreadNotifications = $user->unreadNotifications()->latest()->get();
+            corsecAutoReadResolvedNotifications($unreadNotifications);
+
+            $unreadNotifications = $user->unreadNotifications()->latest()->get();
+            $filteredNotifications = corsecFilterActionableNotifications($unreadNotifications);
+
+            $notifications = $filteredNotifications->map(function ($notification) {
+                $formatted = formatNotifikasi($notification);
+
+                return [
+                    'id' => (string) $notification->id,
+                    'title' => (string) ($formatted['title'] ?? 'Notifikasi'),
+                    'message' => (string) ($formatted['message'] ?? 'Ada notifikasi baru.'),
+                    'created_human' => optional($notification->created_at)->diffForHumans(),
+                    'created_at' => optional($notification->created_at)->toIso8601String(),
+                ];
+            })->values();
+
+            return response()->json([
+                'count' => $notifications->count(),
+                'notifications' => $notifications,
+            ]);
+        })->name('notifications.list')->middleware('auth');
+
         Route::post('/notifications/read-all', function () {
-            auth()->user()->unreadNotifications->markAsRead();
-            return response()->json(['success' => true]);
+            $user = auth()->user();
+            if ($user) {
+                $user->unreadNotifications()->update([
+                    'read_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'count' => 0,
+            ]);
         })->name('notifications.read_all')->middleware('auth');
 });
