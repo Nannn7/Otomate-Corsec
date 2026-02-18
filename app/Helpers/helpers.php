@@ -458,7 +458,8 @@
                     case 'outgoing_letter_corpsec_approval':
                         return $status === \Modules\Corsec\Models\OutgoingLetter::STATUS_WAITING_VERIFICATION;
                     case 'outgoing_letter_final_upload':
-                        return $status === \Modules\Corsec\Models\OutgoingLetter::STATUS_FINAL_UPLOADED;
+                        return $status === \Modules\Corsec\Models\OutgoingLetter::STATUS_WAITING_FINAL_UPLOAD
+                            || $status === 'final_uploaded';
                     default:
                         return $status !== \Modules\Corsec\Models\OutgoingLetter::STATUS_VERIFIED;
                 }
