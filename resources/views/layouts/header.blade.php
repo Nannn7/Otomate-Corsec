@@ -32,6 +32,10 @@
                 $unreadNotifications = $user
                     ? $user->unreadNotifications()->latest()->get()
                     : collect();
+                if ($user) {
+                    corsecAutoReadResolvedNotifications($unreadNotifications);
+                    $unreadNotifications = $user->unreadNotifications()->latest()->get();
+                }
                 $filteredNotifications = corsecFilterActionableNotifications($unreadNotifications);
                 $unreadCount = $filteredNotifications->count();
             @endphp

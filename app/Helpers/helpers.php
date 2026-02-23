@@ -391,11 +391,166 @@
                     ->whereIn('id', $meetingIds)
                     ->pluck('status', 'id');
 
+            $outgoingDirCheckerApprovedMap = collect();
+            $outgoingComplianceCheckerApprovedMap = collect();
+            if ($outgoingIds->isNotEmpty()) {
+                $pendingByOutgoingId = \Modules\Corsec\Models\Approval::query()
+                    ->select(['approvable_id', 'created_at'])
+                    ->where('approvable_type', \Modules\Corsec\Models\OutgoingLetter::class)
+                    ->whereIn('approvable_id', $outgoingIds->all())
+                    ->where('status', 'pending')
+                    ->orderByDesc('created_at')
+                    ->orderByDesc('id')
+                    ->get()
+                    ->groupBy(function ($row) {
+                        return (string) $row->approvable_id;
+                    })
+                    ->map(function ($rows) {
+                        return optional($rows->first())->created_at;
+                    });
+
+                $approvedCheckerRows = \Modules\Corsec\Models\Approval::query()
+                    ->select(['approvable_id', 'note', 'created_at'])
+                    ->where('approvable_type', \Modules\Corsec\Models\OutgoingLetter::class)
+                    ->whereIn('approvable_id', $outgoingIds->all())
+                    ->where('status', 'approved')
+                    ->where(function ($query) {
+                        $query->where('note', 'ilike', 'EO Direktorat Approved%')
+                            ->orWhere('note', 'ilike', 'EO Kepatuhan Approved%');
+                    })
+                    ->orderBy('created_at')
+                    ->get()
+                    ->groupBy(function ($row) {
+                        return (string) $row->approvable_id;
+                    });
+
+                foreach ($outgoingIds as $outgoingId) {
+                    $key = (string) $outgoingId;
+                    $pendingAt = $pendingByOutgoingId->get($key);
+                    $rows = $approvedCheckerRows->get($key, collect());
+
+                    if ($pendingAt) {
+                        $pendingAtCarbon = \Illuminate\Support\Carbon::parse($pendingAt);
+                        $rows = $rows->filter(function ($row) use ($pendingAtCarbon) {
+                            return \Illuminate\Support\Carbon::parse($row->created_at)->gte($pendingAtCarbon);
+                        });
+                    }
+
+                    $outgoingDirCheckerApprovedMap->put($key, $rows->contains(function ($row) {
+                        return \Illuminate\Support\Str::startsWith((string) $row->note, 'EO Direktorat Approved');
+                    }));
+
+                    $outgoingComplianceCheckerApprovedMap->put($key, $rows->contains(function ($row) {
+                        return \Illuminate\Support\Str::startsWith((string) $row->note, 'EO Kepatuhan Approved');
+                    }));
+                }
+            }
+
+            $workplanRequiresCheckerMap = collect();
+            $workplanCheckerApprovedMap = collect();
+            if ($workplanIds->isNotEmpty()) {
+                $pendingByWorkplanId = \Modules\Corsec\Models\Approval::query()
+                    ->select(['approvable_id', 'note', 'created_at'])
+                    ->where('approvable_type', \Modules\Corsec\Models\WorkProgram::class)
+                    ->whereIn('approvable_id', $workplanIds->all())
+                    ->where('status', 'pending')
+                    ->orderByDesc('created_at')
+                    ->orderByDesc('id')
+                    ->get()
+                    ->groupBy(function ($row) {
+                        return (string) $row->approvable_id;
+                    })
+                    ->map(function ($rows) {
+                        return $rows->first();
+                    });
+
+                $checkerApprovedRows = \Modules\Corsec\Models\Approval::query()
+                    ->select(['approvable_id', 'note', 'created_at'])
+                    ->where('approvable_type', \Modules\Corsec\Models\WorkProgram::class)
+                    ->whereIn('approvable_id', $workplanIds->all())
+                    ->where('status', 'approved')
+                    ->where('note', 'ilike', 'EO Direktorat Approved%')
+                    ->orderBy('created_at')
+                    ->get()
+                    ->groupBy(function ($row) {
+                        return (string) $row->approvable_id;
+                    });
+
+                foreach ($workplanIds as $workplanId) {
+                    $key = (string) $workplanId;
+                    $pending = $pendingByWorkplanId->get($key);
+                    $requiresChecker = true;
+                    $rows = $checkerApprovedRows->get($key, collect());
+
+                    if ($pending) {
+                        $pendingNote = \Illuminate\Support\Str::lower((string) ($pending->note ?? ''));
+                        $requiresChecker = \Illuminate\Support\Str::contains($pendingNote, 'eo dan dd direktorat');
+                        $pendingAtCarbon = \Illuminate\Support\Carbon::parse($pending->created_at);
+                        $rows = $rows->filter(function ($row) use ($pendingAtCarbon) {
+                            return \Illuminate\Support\Carbon::parse($row->created_at)->gte($pendingAtCarbon);
+                        });
+                    }
+
+                    $workplanRequiresCheckerMap->put($key, $requiresChecker);
+                    $workplanCheckerApprovedMap->put($key, $rows->isNotEmpty());
+                }
+            }
+
+            $meetingDirCheckerApprovedMap = collect();
+            if ($meetingIds->isNotEmpty()) {
+                $pendingByMeetingId = \Modules\Corsec\Models\Approval::query()
+                    ->select(['approvable_id', 'created_at'])
+                    ->where('approvable_type', \Modules\Corsec\Models\Meeting::class)
+                    ->whereIn('approvable_id', $meetingIds->all())
+                    ->where('status', 'pending')
+                    ->orderByDesc('created_at')
+                    ->orderByDesc('id')
+                    ->get()
+                    ->groupBy(function ($row) {
+                        return (string) $row->approvable_id;
+                    })
+                    ->map(function ($rows) {
+                        return optional($rows->first())->created_at;
+                    });
+
+                $checkerApprovedRows = \Modules\Corsec\Models\Approval::query()
+                    ->select(['approvable_id', 'note', 'created_at'])
+                    ->where('approvable_type', \Modules\Corsec\Models\Meeting::class)
+                    ->whereIn('approvable_id', $meetingIds->all())
+                    ->where('status', 'approved')
+                    ->where('note', 'ilike', 'EO Direktorat Approved%')
+                    ->orderBy('created_at')
+                    ->get()
+                    ->groupBy(function ($row) {
+                        return (string) $row->approvable_id;
+                    });
+
+                foreach ($meetingIds as $meetingId) {
+                    $key = (string) $meetingId;
+                    $pendingAt = $pendingByMeetingId->get($key);
+                    $rows = $checkerApprovedRows->get($key, collect());
+
+                    if ($pendingAt) {
+                        $pendingAtCarbon = \Illuminate\Support\Carbon::parse($pendingAt);
+                        $rows = $rows->filter(function ($row) use ($pendingAtCarbon) {
+                            return \Illuminate\Support\Carbon::parse($row->created_at)->gte($pendingAtCarbon);
+                        });
+                    }
+
+                    $meetingDirCheckerApprovedMap->put($key, $rows->isNotEmpty());
+                }
+            }
+
             return [
                 'incoming' => $incomingStatusMap,
                 'outgoing' => $outgoingStatusMap,
                 'workplan' => $workplanStatusMap,
                 'meeting' => $meetingStatusMap,
+                'outgoing_dir_checker_approved' => $outgoingDirCheckerApprovedMap,
+                'outgoing_compliance_checker_approved' => $outgoingComplianceCheckerApprovedMap,
+                'workplan_requires_checker' => $workplanRequiresCheckerMap,
+                'workplan_checker_approved' => $workplanCheckerApprovedMap,
+                'meeting_dir_checker_approved' => $meetingDirCheckerApprovedMap,
             ];
         }
     }
@@ -412,6 +567,15 @@
         {
             $data = corsecNotificationData($notification);
             $type = (string) ($data['notification_type'] ?? '');
+            $snapshotStatus = trim((string) ($data['status'] ?? ''));
+
+            $matchesSnapshotStatus = static function (string $currentStatus) use ($snapshotStatus): bool {
+                if ($snapshotStatus === '') {
+                    return true;
+                }
+
+                return $snapshotStatus === $currentStatus;
+            };
 
             $incomingId = $data['incoming_letter_id'] ?? null;
             if ($incomingId) {
@@ -419,6 +583,11 @@
                 if ($status === '') {
                     return false;
                 }
+
+                $incomingTerminalStatuses = [
+                    \Modules\Corsec\Models\IncomingLetter::STATUS_VERIFIED,
+                    \Modules\Corsec\Models\IncomingLetter::STATUS_REJECTED,
+                ];
 
                 switch ($type) {
                     case 'incoming_letter_dir_approval':
@@ -432,12 +601,11 @@
                         return !in_array($status, [
                             \Modules\Corsec\Models\IncomingLetter::STATUS_VERIFIED,
                             \Modules\Corsec\Models\IncomingLetter::STATUS_REJECTED,
-                        ], true);
+                        ], true) && $matchesSnapshotStatus($status);
+                    case 'incoming_letter_action':
+                        return !in_array($status, $incomingTerminalStatuses, true) && $matchesSnapshotStatus($status);
                     default:
-                        return !in_array($status, [
-                            \Modules\Corsec\Models\IncomingLetter::STATUS_VERIFIED,
-                            \Modules\Corsec\Models\IncomingLetter::STATUS_REJECTED,
-                        ], true);
+                        return !in_array($status, $incomingTerminalStatuses, true) && $matchesSnapshotStatus($status);
                 }
             }
 
@@ -448,20 +616,44 @@
                     return false;
                 }
 
+                $outgoingTerminalStatuses = [
+                    \Modules\Corsec\Models\OutgoingLetter::STATUS_VERIFIED,
+                    \Modules\Corsec\Models\OutgoingLetter::STATUS_CANCELLED,
+                ];
+
+                $message = \Illuminate\Support\Str::lower((string) ($data['message'] ?? ''));
+                $title = \Illuminate\Support\Str::lower((string) ($data['title'] ?? ''));
+
                 switch ($type) {
                     case 'outgoing_letter_dir_approval':
-                        return $status === \Modules\Corsec\Models\OutgoingLetter::STATUS_WAITING_DIR_APPROVAL;
+                        if ($status !== \Modules\Corsec\Models\OutgoingLetter::STATUS_WAITING_DIR_APPROVAL) {
+                            return false;
+                        }
+                        $checkerApproved = (bool) (($statusMaps['outgoing_dir_checker_approved'] ?? collect())->get((string) $outgoingId) ?? false);
+                        $isDdStage = \Illuminate\Support\Str::contains($message, 'dd direktorat')
+                            || \Illuminate\Support\Str::contains($title, 'dd direktorat');
+                        return $isDdStage ? $checkerApproved : !$checkerApproved;
+                    case 'outgoing_letter_cancel_approval':
+                        return $status === \Modules\Corsec\Models\OutgoingLetter::STATUS_WAITING_CANCEL_APPROVAL;
                     case 'outgoing_letter_compliance_review':
                         return $status === \Modules\Corsec\Models\OutgoingLetter::STATUS_COMPLIANCE_REVIEW;
                     case 'outgoing_letter_compliance_approval':
-                        return $status === \Modules\Corsec\Models\OutgoingLetter::STATUS_WAITING_COMPLIANCE_APPROVAL;
+                        if ($status !== \Modules\Corsec\Models\OutgoingLetter::STATUS_WAITING_COMPLIANCE_APPROVAL) {
+                            return false;
+                        }
+                        $checkerApproved = (bool) (($statusMaps['outgoing_compliance_checker_approved'] ?? collect())->get((string) $outgoingId) ?? false);
+                        $isDdStage = \Illuminate\Support\Str::contains($message, 'dd kepatuhan')
+                            || \Illuminate\Support\Str::contains($title, 'dd kepatuhan');
+                        return $isDdStage ? $checkerApproved : !$checkerApproved;
                     case 'outgoing_letter_corpsec_approval':
                         return $status === \Modules\Corsec\Models\OutgoingLetter::STATUS_WAITING_VERIFICATION;
                     case 'outgoing_letter_final_upload':
                         return $status === \Modules\Corsec\Models\OutgoingLetter::STATUS_WAITING_FINAL_UPLOAD
                             || $status === 'final_uploaded';
+                    case 'outgoing_letter_action':
+                        return !in_array($status, $outgoingTerminalStatuses, true) && $matchesSnapshotStatus($status);
                     default:
-                        return $status !== \Modules\Corsec\Models\OutgoingLetter::STATUS_VERIFIED;
+                        return !in_array($status, $outgoingTerminalStatuses, true) && $matchesSnapshotStatus($status);
                 }
             }
 
@@ -474,17 +666,28 @@
 
                 switch ($type) {
                     case 'workplan_dir_approval':
-                    case 'workplan_dd_approval':
                     case 'workplan_update_dir_approval':
+                        if ($status !== \Modules\Corsec\Models\WorkProgram::STATUS_WAITING_DIR_APPROVAL) {
+                            return false;
+                        }
+                        $requiresChecker = (bool) (($statusMaps['workplan_requires_checker'] ?? collect())->get((string) $workplanId) ?? true);
+                        $checkerApproved = (bool) (($statusMaps['workplan_checker_approved'] ?? collect())->get((string) $workplanId) ?? false);
+                        return $requiresChecker && !$checkerApproved;
+                    case 'workplan_dd_approval':
                     case 'workplan_update_dd_approval':
-                        return $status === \Modules\Corsec\Models\WorkProgram::STATUS_WAITING_DIR_APPROVAL;
+                        if ($status !== \Modules\Corsec\Models\WorkProgram::STATUS_WAITING_DIR_APPROVAL) {
+                            return false;
+                        }
+                        $requiresChecker = (bool) (($statusMaps['workplan_requires_checker'] ?? collect())->get((string) $workplanId) ?? true);
+                        $checkerApproved = (bool) (($statusMaps['workplan_checker_approved'] ?? collect())->get((string) $workplanId) ?? false);
+                        return !$requiresChecker || $checkerApproved;
                     case 'workplan_action':
-                        return $status === \Modules\Corsec\Models\WorkProgram::STATUS_RETURNED;
+                        return $status === \Modules\Corsec\Models\WorkProgram::STATUS_RETURNED && $matchesSnapshotStatus($status);
                     default:
                         return in_array($status, [
                             \Modules\Corsec\Models\WorkProgram::STATUS_WAITING_DIR_APPROVAL,
                             \Modules\Corsec\Models\WorkProgram::STATUS_RETURNED,
-                        ], true);
+                        ], true) && $matchesSnapshotStatus($status);
                 }
             }
 
@@ -495,7 +698,37 @@
                     return false;
                 }
 
-                return !in_array($status, ['done', 'completed', 'closed', 'verified'], true);
+                $meetingTerminalStatuses = [
+                    \Modules\Corsec\Models\Meeting::STATUS_DONE_TINDAKLANJUT_HASIL_RAPAT,
+                    'done',
+                    'completed',
+                    'closed',
+                    'verified',
+                ];
+
+                $message = \Illuminate\Support\Str::lower((string) ($data['message'] ?? ''));
+                $title = \Illuminate\Support\Str::lower((string) ($data['title'] ?? ''));
+
+                switch ($type) {
+                    case 'meeting_corsec_approval':
+                        return $status === \Modules\Corsec\Models\Meeting::STATUS_WAITING_CORSEC_APPROVAL;
+                    case 'meeting_directorate_approval':
+                        if ($status !== \Modules\Corsec\Models\Meeting::STATUS_WAITING_DIREKTORAT_APPROVAL) {
+                            return false;
+                        }
+                        $checkerApproved = (bool) (($statusMaps['meeting_dir_checker_approved'] ?? collect())->get((string) $meetingId) ?? false);
+                        $isDdStage = \Illuminate\Support\Str::contains($message, 'dd direktorat')
+                            || \Illuminate\Support\Str::contains($title, 'dd direktorat');
+                        return $isDdStage ? $checkerApproved : !$checkerApproved;
+                    case 'meeting_minutes_final':
+                        return $status === \Modules\Corsec\Models\Meeting::STATUS_NOTULEN_FINAL;
+                    case 'meeting_followup_done':
+                        return false;
+                    case 'meeting_corsec_action':
+                    case 'meeting_directorate_action':
+                    default:
+                        return !in_array($status, $meetingTerminalStatuses, true) && $matchesSnapshotStatus($status);
+                }
             }
 
             return true;
