@@ -373,11 +373,18 @@
                     ->whereIn('id', $incomingIds)
                     ->pluck('status', 'id');
 
-            $outgoingStatusMap = $outgoingIds->isEmpty()
+            $outgoingRows = $outgoingIds->isEmpty()
                 ? collect()
                 : \Modules\Corsec\Models\OutgoingLetter::query()
+                    ->select(['id', 'status', 'authorized_status', 'cancelled_at'])
                     ->whereIn('id', $outgoingIds)
-                    ->pluck('status', 'id');
+                    ->get();
+
+            $outgoingStatusMap = $outgoingRows->pluck('status', 'id');
+            $outgoingAuthorizedStatusMap = $outgoingRows->pluck('authorized_status', 'id');
+            $outgoingCancelledAtMap = $outgoingRows->mapWithKeys(function ($row) {
+                return [(string) $row->id => !empty($row->cancelled_at)];
+            });
 
             $workplanStatusMap = $workplanIds->isEmpty()
                 ? collect()
@@ -544,6 +551,8 @@
             return [
                 'incoming' => $incomingStatusMap,
                 'outgoing' => $outgoingStatusMap,
+                'outgoing_authorized_status' => $outgoingAuthorizedStatusMap,
+                'outgoing_cancelled_at' => $outgoingCancelledAtMap,
                 'workplan' => $workplanStatusMap,
                 'meeting' => $meetingStatusMap,
                 'outgoing_dir_checker_approved' => $outgoingDirCheckerApprovedMap,
@@ -616,9 +625,22 @@
                     return false;
                 }
 
+                $authorizedStatus = \Illuminate\Support\Str::lower((string) (($statusMaps['outgoing_authorized_status'] ?? collect())->get((string) $outgoingId) ?? ''));
+                $hasCancelledAt = (bool) (($statusMaps['outgoing_cancelled_at'] ?? collect())->get((string) $outgoingId) ?? false);
+
+                $isCancelled = $status === \Modules\Corsec\Models\OutgoingLetter::STATUS_CANCELLED
+                    || $authorizedStatus === 'cancelled'
+                    || $hasCancelledAt;
+                if ($isCancelled) {
+                    return false;
+                }
+
                 $outgoingTerminalStatuses = [
                     \Modules\Corsec\Models\OutgoingLetter::STATUS_VERIFIED,
                     \Modules\Corsec\Models\OutgoingLetter::STATUS_CANCELLED,
+                    'done',
+                    'completed',
+                    'sent',
                 ];
 
                 $message = \Illuminate\Support\Str::lower((string) ($data['message'] ?? ''));

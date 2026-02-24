@@ -19,8 +19,13 @@ Route::middleware(['auth'])->group(function () {
         $outgoingOpen = OutgoingLetter::query()
             ->where(function ($q) {
                 $q->whereNull('status')
-                    ->orWhereNotIn('status', ['done', 'completed', 'sent', 'verified']);
+                    ->orWhereNotIn('status', ['done', 'completed', 'sent', 'verified', OutgoingLetter::STATUS_CANCELLED]);
             })
+            ->where(function ($q) {
+                $q->whereNull('authorized_status')
+                    ->orWhere('authorized_status', '!=', 'cancelled');
+            })
+            ->whereNull('cancelled_at')
             ->count();
 
         $meetingOpen = Meeting::query()
