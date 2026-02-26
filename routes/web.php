@@ -31,7 +31,13 @@ Route::middleware(['auth'])->group(function () {
         $meetingOpen = Meeting::query()
             ->where(function ($q) {
                 $q->whereNull('status')
-                    ->orWhereNotIn('status', ['done', 'completed', 'closed', 'verified']);
+                    ->orWhereNotIn('status', [
+                        'done',
+                        'completed',
+                        'closed',
+                        'verified',
+                        Meeting::STATUS_DONE_TINDAKLANJUT_HASIL_RAPAT,
+                    ]);
             })
             ->count();
 
