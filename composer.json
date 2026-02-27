@@ -13,6 +13,7 @@
         "daengdeni/corsec-module": "dev-main",
         "daengdeni/authentication-module": "dev-master",
         "daengdeni/basicdata-module": "dev-master",
+        "daengdeni/logs-module": "^1.0",
         "daengdeni/laravel-id-generator": "^1.0",
         "daengdeni/usermanagement-module": "dev-master",
         "diglactic/laravel-breadcrumbs": "^10.0",
@@ -46,6 +47,7 @@
     "autoload": {
         "psr-4": {
             "App\\": "app/",
+            "Jackiedo\\LogReader\\": "app/Support/Jackiedo/LogReader/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         },
@@ -119,6 +121,11 @@
             "name": "daengdeni/corsec-module",
             "type": "vcs",
             "url": "https://git.putrakuningan.com/daengdeni/corsec"
+        },
+        {
+            "name": "daengdeni/logs-module",
+            "type": "vcs",
+            "url": "https://git.putrakuningan.com/daengdeni/logs"
         }
     ]
 }

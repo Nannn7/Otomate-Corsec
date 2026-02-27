@@ -95,7 +95,13 @@ export class KTDataTable<T extends KTDataTableDataInterface> extends KTComponent
 			/**
 			 * Info text when there is no data
 			 */
-			infoEmpty: 'No records found',
+			infoEmpty: `
+				<div class="table-empty-state" role="status" aria-live="polite">
+					<i class="ki-filled ki-file-deleted" aria-hidden="true"></i>
+					<div class="table-empty-title">Belum ada data</div>
+					<div class="table-empty-description">Data akan muncul setelah ada input baru.</div>
+				</div>
+			`,
 			/**
 			 * Available page sizes
 			 */
@@ -857,6 +863,9 @@ export class KTDataTable<T extends KTDataTableDataInterface> extends KTComponent
 	private _noticeOnTable(message: string = ''): void {
 		const row = this._tbodyElement.insertRow();
 		const cell = row.insertCell();
+		row.classList.add('table-empty-row');
+		row.dataset.emptyRow = 'true';
+		cell.classList.add('table-empty-cell');
 		cell.colSpan = this._getTableHeaders()?.length || 0;
 		cell.innerHTML = message;
 	}
