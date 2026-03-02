@@ -1,54 +1,25 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Corsec\Models\IncomingLetter;
-use Modules\Corsec\Models\Meeting;
-use Modules\Corsec\Models\OutgoingLetter;
-use Modules\Corsec\Models\WorkProgram;
+use Modules\Corsec\Services\CorsecPermissionService;
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/', function () {
-        $incomingOpen = IncomingLetter::query()
-            ->whereNotIn('status', [
-                IncomingLetter::STATUS_VERIFIED,
-                IncomingLetter::STATUS_REJECTED,
-                IncomingLetter::STATUS_RETURNED,
-            ])
-            ->count();
+    Route::get('/', function (CorsecPermissionService $permissionService) {
+        $user = auth()->user();
+        $counts = [
+            'incomingOpen' => 0,
+            'outgoingOpen' => 0,
+            'meetingOpen' => 0,
+            'workplanOpen' => 0,
+        ];
 
-        $outgoingOpen = OutgoingLetter::query()
-            ->where(function ($q) {
-                $q->whereNull('status')
-                    ->orWhereNotIn('status', ['done', 'completed', 'sent', 'verified', OutgoingLetter::STATUS_CANCELLED]);
-            })
-            ->where(function ($q) {
-                $q->whereNull('authorized_status')
-                    ->orWhere('authorized_status', '!=', 'cancelled');
-            })
-            ->whereNull('cancelled_at')
-            ->count();
+        if ($permissionService->canAccessDashboard($user)) {
+            $counts = $permissionService->dashboardCounts($user);
+        }
 
-        $meetingOpen = Meeting::query()
-            ->where(function ($q) {
-                $q->whereNull('status')
-                    ->orWhereNotIn('status', [
-                        'done',
-                        'completed',
-                        'closed',
-                        'verified',
-                        Meeting::STATUS_DONE_TINDAKLANJUT_HASIL_RAPAT,
-                    ]);
-            })
-            ->count();
+        $overview = $permissionService->dashboardOverviewData($counts);
 
-        $workplanOpen = WorkProgram::query()
-            ->where(function ($q) {
-                $q->whereNull('status')
-                    ->orWhereNotIn('status', ['done', 'returned', 'rejected']);
-            })
-            ->count();
-
-        return view('welcome', compact('incomingOpen', 'outgoingOpen', 'meetingOpen', 'workplanOpen'));
+        return view('welcome', array_merge($counts, $overview));
     })->name('dashboard');
 
         Route::get('/notifications/count', function () {

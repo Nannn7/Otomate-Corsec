@@ -354,55 +354,6 @@
     </style>
 @endpush
 
-@php
-    $cards = collect([
-        [
-            'key' => 'incoming',
-            'title' => 'Incoming Letter',
-            'description' => 'Surat masuk yang belum mencapai status final.',
-            'count' => (int) ($incomingOpen ?? 0),
-            'route' => route('letter.incoming.index'),
-            'accent' => '#0ea5e9',
-            'action' => 'Buka Incoming Letter',
-        ],
-        [
-            'key' => 'outgoing',
-            'title' => 'Outgoing Letter',
-            'description' => 'Surat keluar yang masih butuh tindak lanjut.',
-            'count' => (int) ($outgoingOpen ?? 0),
-            'route' => route('letter.outgoing.index'),
-            'accent' => '#f97316',
-            'action' => 'Buka Outgoing Letter',
-        ],
-        [
-            'key' => 'meeting',
-            'title' => 'Meeting',
-            'description' => 'Meeting aktif yang belum selesai.',
-            'count' => (int) ($meetingOpen ?? 0),
-            'route' => route('meeting.index'),
-            'accent' => '#6366f1',
-            'action' => 'Buka Meeting',
-        ],
-        [
-            'key' => 'workplan',
-            'title' => 'Work Plan',
-            'description' => 'Item work plan yang belum closed.',
-            'count' => (int) ($workplanOpen ?? 0),
-            'route' => route('workplan.index'),
-            'accent' => '#14b8a6',
-            'action' => 'Buka Work Plan',
-        ],
-    ]);
-
-    $totalOpen = (int) $cards->sum('count');
-    $attentionServices = (int) $cards->where('count', '>', 0)->count();
-    $clearServices = (int) $cards->where('count', 0)->count();
-    $serviceTotal = max($cards->count(), 1);
-    $healthScore = (int) round(($clearServices / $serviceTotal) * 100);
-    $maxCount = max((int) $cards->max('count'), 1);
-    $dominant = $cards->sortByDesc('count')->first();
-@endphp
-
 <div class="corsec-dashboard" data-dashboard-root>
     <section class="corsec-hero">
         <div class="corsec-hero__content">
