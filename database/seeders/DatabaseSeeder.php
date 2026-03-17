@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Modules\Basicdata\Database\Seeders\BasicdataDatabaseSeeder;
 use Modules\Corsec\Database\Seeders\CorsecDatabaseSeeder;
+use Modules\Logs\Database\Seeders\LogsDatabaseSeeder;
 use Modules\Usermanagement\Database\Seeders\UsermanagementDatabaseSeeder;
 
 class DatabaseSeeder extends Seeder
@@ -16,8 +17,9 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             BasicdataDatabaseSeeder::class,
-            UsermanagementDatabaseSeeder::class,
+            LogsDatabaseSeeder::class,
             CorsecDatabaseSeeder::class,
+            UsermanagementDatabaseSeeder::class,
         ]);
     }
 }

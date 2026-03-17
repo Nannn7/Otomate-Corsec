@@ -392,11 +392,15 @@
                     ->whereIn('id', $workplanIds)
                     ->pluck('status', 'id');
 
-            $meetingStatusMap = $meetingIds->isEmpty()
+            $meetingRows = $meetingIds->isEmpty()
                 ? collect()
                 : \Modules\Corsec\Models\Meeting::query()
+                    ->select(['id', 'status', 'directorate_response_status'])
                     ->whereIn('id', $meetingIds)
-                    ->pluck('status', 'id');
+                    ->get();
+
+            $meetingStatusMap = $meetingRows->pluck('status', 'id');
+            $meetingResponseStatusMap = $meetingRows->pluck('directorate_response_status', 'id');
 
             $outgoingDirCheckerApprovedMap = collect();
             $outgoingComplianceCheckerApprovedMap = collect();
@@ -560,6 +564,7 @@
                 'workplan_requires_checker' => $workplanRequiresCheckerMap,
                 'workplan_checker_approved' => $workplanCheckerApprovedMap,
                 'meeting_dir_checker_approved' => $meetingDirCheckerApprovedMap,
+                'meeting_response_status' => $meetingResponseStatusMap,
             ];
         }
     }
@@ -722,6 +727,8 @@
 
                 $meetingTerminalStatuses = [
                     \Modules\Corsec\Models\Meeting::STATUS_DONE_TINDAKLANJUT_HASIL_RAPAT,
+                    \Modules\Corsec\Models\Meeting::STATUS_CANCELLED_DIREKTORAT,
+                    \Modules\Corsec\Models\Meeting::STATUS_CLOSED_NOT_CONDUCTED,
                     'done',
                     'completed',
                     'closed',
@@ -730,10 +737,17 @@
 
                 $message = \Illuminate\Support\Str::lower((string) ($data['message'] ?? ''));
                 $title = \Illuminate\Support\Str::lower((string) ($data['title'] ?? ''));
+                $responseStatus = (string) (($statusMaps['meeting_response_status'] ?? collect())->get((string) $meetingId) ?? '');
 
                 switch ($type) {
                     case 'meeting_corsec_approval':
                         return $status === \Modules\Corsec\Models\Meeting::STATUS_WAITING_CORSEC_APPROVAL;
+                    case 'meeting_directorate_response_reminder':
+                        return in_array($status, [
+                            \Modules\Corsec\Models\Meeting::STATUS_JADWAL_TERKIRIM,
+                            \Modules\Corsec\Models\Meeting::STATUS_PENDING_DIREKTORAT,
+                        ], true)
+                            && in_array($responseStatus, ['', \Modules\Corsec\Models\Meeting::RESPONSE_PENDING], true);
                     case 'meeting_directorate_approval':
                         if ($status !== \Modules\Corsec\Models\Meeting::STATUS_WAITING_DIREKTORAT_APPROVAL) {
                             return false;
