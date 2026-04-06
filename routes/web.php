@@ -4,6 +4,55 @@ use Illuminate\Support\Facades\Route;
 use Modules\Corsec\Services\CorsecPermissionService;
 
 Route::middleware(['auth'])->group(function () {
+    $buildNotificationPayload = static function ($user, bool $includeItems = false): array {
+        if (!$user) {
+            return [
+                'count' => 0,
+                'notifications' => [],
+            ];
+        }
+
+        $unreadNotifications = $user->unreadNotifications()->latest()->get();
+        $partitioned = corsecPartitionActionableNotifications($unreadNotifications);
+        $resolvedIds = $partitioned['resolved_ids'];
+
+        if (!empty($resolvedIds)) {
+            \Illuminate\Support\Facades\DB::table('notifications')
+                ->whereIn('id', $resolvedIds)
+                ->whereNull('read_at')
+                ->update([
+                    'read_at' => now(),
+                    'updated_at' => now(),
+                ]);
+        }
+
+        $actionableNotifications = $partitioned['actionable'];
+        $payload = [
+            'count' => $actionableNotifications->count(),
+        ];
+
+        if (!$includeItems) {
+            return $payload + ['notifications' => []];
+        }
+
+        $payload['notifications'] = $actionableNotifications
+            ->take(20)
+            ->map(function ($notification) {
+                $formatted = formatNotifikasi($notification);
+
+                return [
+                    'id' => (string) $notification->id,
+                    'title' => (string) ($formatted['title'] ?? 'Notifikasi'),
+                    'message' => (string) ($formatted['message'] ?? 'Ada notifikasi baru.'),
+                    'created_human' => optional($notification->created_at)->diffForHumans(),
+                    'created_at' => optional($notification->created_at)->toIso8601String(),
+                ];
+            })
+            ->values();
+
+        return $payload;
+    };
+
     Route::get('/', function (CorsecPermissionService $permissionService) {
         $user = auth()->user();
         $counts = [
@@ -22,54 +71,12 @@ Route::middleware(['auth'])->group(function () {
         return view('welcome', array_merge($counts, $overview));
     })->name('dashboard');
 
-        Route::get('/notifications/count', function () {
-            $user = auth()->user();
-            if (!$user) {
-                return response()->json(['count' => 0]);
-            }
-
-            $unreadNotifications = $user->unreadNotifications()->latest()->get();
-            corsecAutoReadResolvedNotifications($unreadNotifications);
-
-            $unreadNotifications = $user->unreadNotifications()->latest()->get();
-            $filteredNotifications = corsecFilterActionableNotifications($unreadNotifications);
-
-            return response()->json([
-                'count' => $filteredNotifications->count(),
-            ]);
+        Route::get('/notifications/count', function () use ($buildNotificationPayload) {
+            return response()->json($buildNotificationPayload(auth()->user()));
         })->name('notifications.count')->middleware('auth');
 
-        Route::get('/notifications/list', function () {
-            $user = auth()->user();
-            if (!$user) {
-                return response()->json([
-                    'count' => 0,
-                    'notifications' => [],
-                ]);
-            }
-
-            $unreadNotifications = $user->unreadNotifications()->latest()->get();
-            corsecAutoReadResolvedNotifications($unreadNotifications);
-
-            $unreadNotifications = $user->unreadNotifications()->latest()->get();
-            $filteredNotifications = corsecFilterActionableNotifications($unreadNotifications);
-
-            $notifications = $filteredNotifications->map(function ($notification) {
-                $formatted = formatNotifikasi($notification);
-
-                return [
-                    'id' => (string) $notification->id,
-                    'title' => (string) ($formatted['title'] ?? 'Notifikasi'),
-                    'message' => (string) ($formatted['message'] ?? 'Ada notifikasi baru.'),
-                    'created_human' => optional($notification->created_at)->diffForHumans(),
-                    'created_at' => optional($notification->created_at)->toIso8601String(),
-                ];
-            })->values();
-
-            return response()->json([
-                'count' => $notifications->count(),
-                'notifications' => $notifications,
-            ]);
+        Route::get('/notifications/list', function () use ($buildNotificationPayload) {
+            return response()->json($buildNotificationPayload(auth()->user(), true));
         })->name('notifications.list')->middleware('auth');
 
         Route::post('/notifications/read-all', function () {

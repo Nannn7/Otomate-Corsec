@@ -771,6 +771,48 @@
         }
     }
 
+    if (!function_exists('corsecPartitionActionableNotifications')) {
+        /**
+         * Split unread notifications into actionable and resolved items in a single pass.
+         *
+         * @param \Illuminate\Support\Collection|array $notifications
+         * @return array{actionable:\Illuminate\Support\Collection,resolved_ids:array<int,mixed>}
+         */
+        function corsecPartitionActionableNotifications($notifications)
+        {
+            $collection = $notifications instanceof \Illuminate\Support\Collection
+                ? $notifications
+                : collect($notifications);
+
+            if ($collection->isEmpty()) {
+                return [
+                    'actionable' => collect(),
+                    'resolved_ids' => [],
+                ];
+            }
+
+            $statusMaps = corsecNotificationStatusMaps($collection);
+            $actionable = collect();
+            $resolvedIds = [];
+
+            foreach ($collection as $notification) {
+                if (corsecIsNotificationActionable($notification, $statusMaps)) {
+                    $actionable->push($notification);
+                    continue;
+                }
+
+                if (empty($notification->read_at) && !empty($notification->id)) {
+                    $resolvedIds[] = $notification->id;
+                }
+            }
+
+            return [
+                'actionable' => $actionable->values(),
+                'resolved_ids' => array_values(array_unique(array_filter($resolvedIds))),
+            ];
+        }
+    }
+
     if (!function_exists('corsecFilterActionableNotifications')) {
         /**
          * Filter unread notifications to active/actionable items only.
@@ -780,21 +822,7 @@
          */
         function corsecFilterActionableNotifications($notifications)
         {
-            $collection = $notifications instanceof \Illuminate\Support\Collection
-                ? $notifications
-                : collect($notifications);
-
-            if ($collection->isEmpty()) {
-                return collect();
-            }
-
-            $statusMaps = corsecNotificationStatusMaps($collection);
-
-            return $collection
-                ->filter(function ($notification) use ($statusMaps) {
-                    return corsecIsNotificationActionable($notification, $statusMaps);
-                })
-                ->values();
+            return corsecPartitionActionableNotifications($notifications)['actionable'];
         }
     }
 
@@ -807,24 +835,7 @@
          */
         function corsecAutoReadResolvedNotifications($notifications)
         {
-            $collection = $notifications instanceof \Illuminate\Support\Collection
-                ? $notifications
-                : collect($notifications);
-
-            if ($collection->isEmpty()) {
-                return 0;
-            }
-
-            $statusMaps = corsecNotificationStatusMaps($collection);
-
-            $resolvedIds = $collection
-                ->filter(function ($notification) use ($statusMaps) {
-                    return empty($notification->read_at) && !corsecIsNotificationActionable($notification, $statusMaps);
-                })
-                ->pluck('id')
-                ->filter()
-                ->values()
-                ->all();
+            $resolvedIds = corsecPartitionActionableNotifications($notifications)['resolved_ids'];
 
             if (empty($resolvedIds)) {
                 return 0;

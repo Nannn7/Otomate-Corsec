@@ -29,15 +29,7 @@
         <div class="flex items-center gap-2 lg:gap-3.5">
             @php
                 $user = auth()->user();
-                $unreadNotifications = $user
-                    ? $user->unreadNotifications()->latest()->get()
-                    : collect();
-                if ($user) {
-                    corsecAutoReadResolvedNotifications($unreadNotifications);
-                    $unreadNotifications = $user->unreadNotifications()->latest()->get();
-                }
-                $filteredNotifications = corsecFilterActionableNotifications($unreadNotifications);
-                $unreadCount = $filteredNotifications->count();
+                $unreadCount = 0;
             @endphp
             <div class="dropdown" data-dropdown="true" data-dropdown-offset="70px, 10px" data-dropdown-placement="bottom-end"
                  data-dropdown-trigger="click|lg:click">
@@ -66,39 +58,14 @@
                         <div class="scrollable-y-auto" data-scrollable="true" data-scrollable-dependencies="#header"
                              data-scrollable-max-height="auto" data-scrollable-offset="200px">
                             <div class="flex flex-col gap-5 py-5 divider-y divider-gray-200" id="notifications-list">
-                                @forelse ($filteredNotifications as $notification)
-                                    <div class="flex items-center grow gap-2.5 px-5">
-                                        <div
-                                            class="flex items-center justify-center size-8 bg-success-light rounded-full border border-success-clarity">
-                                            <i class="ki-filled ki-check text-lg text-success">
-                                            </i>
-                                        </div>
-                                        <div class="flex flex-col gap-1">
-                                            <span class="text-2sm font-medium text-gray-700">
-                                                {{ formatNotifikasi($notification)['title'] }}<br>
-                                                {{ formatNotifikasi($notification)['message'] }}<br>
-
-                                            </span>
-                                            <span class="font-medium text-gray-500 text-2xs">
-                                                {{ $notification->created_at->diffForHumans() }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    @if(!$loop->last)
-                                    <div class="border-b border-b-gray-200"></div>
-                                    @endif
-                                @empty
-                                    <div class="flex items-center justify-center px-5 text-sm text-gray-500">
-                                        Belum ada notifikasi baru.
-                                    </div>
-                                @endforelse
-
-                                    <!-- Notification sound -->
-                                    <audio id="notification-sound" style="display: none;">
-                                        <source src="{{ asset('assets/media/notif/1.mp3') }}" type="audio/mpeg">
-                                    </audio>
-
+                                <div class="flex items-center justify-center px-5 text-sm text-gray-500">
+                                    Belum ada notifikasi baru.
+                                </div>
                             </div>
+
+                            <audio id="notification-sound" style="display: none;">
+                                <source src="{{ asset('assets/media/notif/1.mp3') }}" type="audio/mpeg">
+                            </audio>
                         </div>
                         <div class="border-b border-b-gray-200">
                         </div>
@@ -128,12 +95,12 @@
                                         {{ Auth::user()->name }}
                                     </span>
                                     <span class="text-xs text-gray-600 hover:text-primary font-medium leading-none">
-                                        {{ Auth::user()->nik ?? "" }} | {{ Auth::user()->branch->name ?? "" }}
+                                        {{ $currentUser?->nik ?? '' }} | {{ $currentUser?->branch?->name ?? '' }}
                                     </span>
                                 </div>
                             </div>
                             <span class="badge badge-xs badge-primary badge-outline">
-                                {{ Auth::user()->roles[0]->name?? "" }}
+                                {{ $currentUser?->roles->first()?->name ?? '' }}
                             </span>
                         </div>
                         <div class="menu-separator">
@@ -185,7 +152,7 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            let previousNotificationCount = {{ $unreadCount }};
+            let previousNotificationCount = 0;
             const notificationSound = document.getElementById('notification-sound');
             const markReadButton = document.getElementById('mark-notifications-read');
             const notificationList = document.getElementById('notifications-list');
@@ -304,7 +271,7 @@
             }
 
             loadNotifications(false);
-            setInterval(() => loadNotifications(true), 5000);
+            setInterval(() => loadNotifications(true), 15000);
 
             if (markReadButton && markReadUrl) {
                 markReadButton.addEventListener('click', function() {

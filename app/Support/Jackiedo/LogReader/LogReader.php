@@ -4,6 +4,7 @@ namespace Jackiedo\LogReader;
 
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Jackiedo\LogReader\Exceptions\UnableToRetrieveLogFilesException;
 
 class LogReader
@@ -40,7 +41,7 @@ class LogReader
         $counter = 1;
 
         foreach ($files as $filePath) {
-            foreach ($this->parseFile((string) $filePath) as $entry) {
+            foreach ($this->cachedEntries((string) $filePath) as $entry) {
                 $rows->push([
                     'id' => (string) $counter++,
                     'date' => (string) ($entry['date'] ?? ''),
@@ -56,23 +57,46 @@ class LogReader
     }
 
     /**
-     * @return \Illuminate\Support\Collection<int, array{date:string,environment:string,level:string,context:string}>
+     * @return array<int, array{date:string,environment:string,level:string,context:string}>
      */
-    protected function parseFile(string $filePath): Collection
+    protected function cachedEntries(string $filePath): array
+    {
+        $cacheKey = 'log-reader:file:' . md5($filePath);
+        $lastModified = @filemtime($filePath) ?: 0;
+        $cached = Cache::get($cacheKey);
+
+        if (is_array($cached) && ($cached['last_modified'] ?? null) === $lastModified) {
+            return $cached['entries'] ?? [];
+        }
+
+        $entries = $this->parseFile($filePath);
+
+        Cache::put($cacheKey, [
+            'last_modified' => $lastModified,
+            'entries' => $entries,
+        ], now()->addMinutes(10));
+
+        return $entries;
+    }
+
+    /**
+     * @return array<int, array{date:string,environment:string,level:string,context:string}>
+     */
+    protected function parseFile(string $filePath): array
     {
         $content = @file_get_contents($filePath);
         if ($content === false || $content === '') {
-            return collect();
+            return [];
         }
 
         $lines = preg_split('/\r\n|\n|\r/', $content) ?: [];
-        $entries = collect();
+        $entries = [];
         $current = null;
 
         foreach ($lines as $line) {
             if (preg_match('/^\[(?<date>[^\]]+)\]\s+(?<environment>[A-Za-z0-9_.-]+)\.(?<level>[A-Z]+):\s*(?<message>.*)$/', $line, $matches)) {
                 if ($current !== null) {
-                    $entries->push($current);
+                    $entries[] = $current;
                 }
 
                 $current = [
@@ -90,7 +114,7 @@ class LogReader
         }
 
         if ($current !== null) {
-            $entries->push($current);
+            $entries[] = $current;
         }
 
         return $entries;
@@ -105,4 +129,3 @@ class LogReader
         }
     }
 }
-
