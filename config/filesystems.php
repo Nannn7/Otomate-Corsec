@@ -39,7 +39,9 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            // Default to a host-relative storage URL so uploaded files stay reachable
+            // even when the app is opened via a different local host/port alias.
+            'url' => env('FILESYSTEM_PUBLIC_URL', '/storage'),
             'visibility' => 'public',
             'throw' => false,
         ],
