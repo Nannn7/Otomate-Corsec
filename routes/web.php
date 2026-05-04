@@ -62,9 +62,11 @@ Route::middleware(['auth'])->group(function () {
             'workplanOpen' => 0,
         ];
 
-        if ($permissionService->canAccessDashboard($user)) {
-            $counts = $permissionService->dashboardCounts($user);
+        if (!$permissionService->canAccessDashboard($user)) {
+            abort(403, 'Sorry! You are not allowed to view corsec app.');
         }
+
+        $counts = $permissionService->dashboardCounts($user);
 
         $overview = $permissionService->dashboardOverviewData($counts);
 
