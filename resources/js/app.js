@@ -34,6 +34,29 @@ document.querySelectorAll(".tomselect").forEach((el) => {
 });
 
 window.toast = toast;
+window.corsecAjaxMessage = function (error, fallback = "Aksi gagal diproses.") {
+    if (error?.responseJSON?.message) {
+        return error.responseJSON.message;
+    }
+
+    if (error?.responseJSON?.error) {
+        return error.responseJSON.error;
+    }
+
+    if (typeof error?.responseText === "string" && error.responseText.trim() !== "") {
+        try {
+            const payload = JSON.parse(error.responseText);
+
+            if (payload?.message) {
+                return payload.message;
+            }
+        } catch {
+            return fallback;
+        }
+    }
+
+    return fallback;
+};
 
 document.querySelectorAll(".toastr").forEach((el) => {
     toast.options = {
@@ -46,6 +69,64 @@ document.querySelectorAll(".toastr").forEach((el) => {
         closeDuration: 300,
     };
     toast[el.dataset.type](el.dataset.message);
+});
+
+const cssEscape = (value) => {
+    if (window.CSS && typeof window.CSS.escape === "function") {
+        return window.CSS.escape(value);
+    }
+
+    return String(value).replace(/["\\]/g, "\\$&");
+};
+
+const validationFieldName = (key) => {
+    const parts = String(key).split(".");
+
+    return parts.slice(1).reduce((name, part) => `${name}[${part}]`, parts[0]);
+};
+
+const findValidationFields = (key) => {
+    const names = new Set([key, validationFieldName(key)]);
+    const fields = [];
+
+    names.forEach((name) => {
+        document
+            .querySelectorAll(`[name="${cssEscape(name)}"]`)
+            .forEach((field) => fields.push(field));
+    });
+
+    return fields;
+};
+
+const showValidationMessage = (field, message) => {
+    const wrapper =
+        field.closest(".flex.flex-col") ||
+        field.closest(".form-group") ||
+        field.parentElement;
+
+    if (!wrapper || wrapper.querySelector("[data-validation-error]")) {
+        return;
+    }
+
+    const feedback = document.createElement("em");
+    feedback.className = "mt-1 text-sm alert text-danger";
+    feedback.dataset.validationError = "true";
+    feedback.textContent = message;
+    wrapper.appendChild(feedback);
+};
+
+Object.entries(window.corsecValidationErrors || {}).forEach(([key, messages]) => {
+    const message = Array.isArray(messages) ? messages[0] : messages;
+
+    findValidationFields(key).forEach((field) => {
+        field.classList.add("border-danger", "bg-danger-light");
+
+        if (field.tomselect?.wrapper) {
+            field.tomselect.wrapper.classList.add("border-danger", "bg-danger-light");
+        }
+
+        showValidationMessage(field, message);
+    });
 });
 
 // Fungsi untuk memformat tanggal ke format Indonesia

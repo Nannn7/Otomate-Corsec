@@ -34,6 +34,14 @@
         <em class="hidden toastr" data-type="success" data-message=" {{ session('success') }}"></em>
     @endif
 
+    @if ($errors->any())
+        <em class="hidden toastr" data-type="error"
+            data-message="Form belum bisa diproses. Periksa kolom yang ditandai merah."></em>
+        <script>
+            window.corsecValidationErrors = @json($errors->messages());
+        </script>
+    @endif
+
 
     <!--begin::Theme mode setup on page load-->
     <script>

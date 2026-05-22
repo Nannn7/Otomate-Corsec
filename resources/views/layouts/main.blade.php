@@ -20,6 +20,30 @@
                 <!-- end: container -->
                 <!-- begin: container -->
                 <div class="container-fluid">
+                    @if (session('success') || session('error') || session('warning') || session('info') || $errors->any())
+                        <div class="mb-5 grid gap-3">
+                            @foreach (['success' => 'success', 'error' => 'danger', 'warning' => 'warning', 'info' => 'info'] as $sessionKey => $alertType)
+                                @if (session($sessionKey))
+                                    <div class="alert alert-{{ $alertType }}">
+                                        {{ session($sessionKey) }}
+                                    </div>
+                                @endif
+                            @endforeach
+
+                            @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    <div class="font-semibold">Form belum bisa diproses.</div>
+                                    <div class="mt-1">Periksa kolom yang ditandai merah dan lengkapi sesuai pesan error.</div>
+                                    <ul class="mt-2 list-disc pl-5">
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+                        </div>
+                    @endif
+
                     @yield('content')
                 </div>
                 <!-- end: container -->
