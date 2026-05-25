@@ -1,13 +1,7 @@
 <?php
 
-use App\Http\Controllers\SecureStorageController;
 use Illuminate\Support\Facades\Route;
 use Modules\Corsec\Services\CorsecPermissionService;
-
-Route::get('/storage/{path}', SecureStorageController::class)
-    ->middleware('auth')
-    ->where('path', '.*')
-    ->name('storage.secure');
 
 Route::middleware(['auth'])->group(function () {
     $buildNotificationPayload = static function ($user, bool $includeItems = false): array {
