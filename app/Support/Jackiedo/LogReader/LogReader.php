@@ -63,9 +63,14 @@ class LogReader
     {
         $cacheKey = 'log-reader:file:' . md5($filePath);
         $lastModified = @filemtime($filePath) ?: 0;
+        $fileSize = @filesize($filePath) ?: 0;
         $cached = Cache::get($cacheKey);
 
-        if (is_array($cached) && ($cached['last_modified'] ?? null) === $lastModified) {
+        if (
+            is_array($cached)
+            && ($cached['last_modified'] ?? null) === $lastModified
+            && ($cached['file_size'] ?? null) === $fileSize
+        ) {
             return $cached['entries'] ?? [];
         }
 
@@ -73,6 +78,7 @@ class LogReader
 
         Cache::put($cacheKey, [
             'last_modified' => $lastModified,
+            'file_size' => $fileSize,
             'entries' => $entries,
         ], now()->addMinutes(10));
 

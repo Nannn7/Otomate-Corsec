@@ -12,12 +12,80 @@ import IMask from "imask";
 window.jQuery = $;
 window.$ = $;
 
-window.Swal = Swal;
-window.swal = Swal;
-
 window.IMask = IMask;
 // window.FilerobotImageEditor = FilerobotImageEditor;
 window.TomSelect = TomSelect;
+
+const CORSEC_NOTIFICATION_TIMEOUT = 15000;
+window.corsecNotificationTimeout = CORSEC_NOTIFICATION_TIMEOUT;
+const wrappedSwalInstances = new WeakSet();
+
+const resolveSwalIcon = (args) => {
+    if (typeof args[0] === "object" && args[0] !== null) {
+        return args[0].icon;
+    }
+
+    return args[2];
+};
+
+const withSuccessSwalDefaults = (args) => {
+    if (resolveSwalIcon(args) !== "success") {
+        return args;
+    }
+
+    if (typeof args[0] === "object" && args[0] !== null) {
+        return [
+            {
+                timer: CORSEC_NOTIFICATION_TIMEOUT,
+                timerProgressBar: true,
+                ...args[0],
+            },
+            ...args.slice(1),
+        ];
+    }
+
+    return [
+        {
+            title: args[0],
+            text: args[1],
+            icon: args[2],
+            timer: CORSEC_NOTIFICATION_TIMEOUT,
+            timerProgressBar: true,
+        },
+    ];
+};
+
+const wrapSwal = (swalInstance) => {
+    if (!swalInstance || typeof swalInstance.fire !== "function") {
+        return swalInstance;
+    }
+
+    if (wrappedSwalInstances.has(swalInstance)) {
+        return swalInstance;
+    }
+
+    const swalFire = swalInstance.fire.bind(swalInstance);
+    swalInstance.fire = (...args) => swalFire(...withSuccessSwalDefaults(args));
+    wrappedSwalInstances.add(swalInstance);
+
+    return swalInstance;
+};
+
+let currentSwal = wrapSwal(Swal);
+Object.defineProperty(window, "Swal", {
+    configurable: true,
+    get: () => currentSwal,
+    set: (value) => {
+        currentSwal = wrapSwal(value);
+    },
+});
+Object.defineProperty(window, "swal", {
+    configurable: true,
+    get: () => currentSwal,
+    set: (value) => {
+        currentSwal = wrapSwal(value);
+    },
+});
 
 document.querySelectorAll(".tomselect").forEach((el) => {
     let settings = {
@@ -34,6 +102,17 @@ document.querySelectorAll(".tomselect").forEach((el) => {
 });
 
 window.toast = toast;
+toast.options = {
+    closeButton: true,
+    timeOut: CORSEC_NOTIFICATION_TIMEOUT,
+    extendedTimeOut: 5000,
+    showMethod: "slideDown",
+    closeMethod: "slideUp",
+    preventDuplicates: true,
+    newestOnTop: true,
+    closeDuration: 300,
+};
+
 window.corsecAjaxMessage = function (error, fallback = "Aksi gagal diproses.") {
     if (error?.responseJSON?.message) {
         return error.responseJSON.message;
@@ -59,15 +138,6 @@ window.corsecAjaxMessage = function (error, fallback = "Aksi gagal diproses.") {
 };
 
 document.querySelectorAll(".toastr").forEach((el) => {
-    toast.options = {
-        closeButton: true,
-        timeOut: 5000,
-        showMethod: "slideDown",
-        closeMethod: "slideUp",
-        preventDuplication: true,
-        newestOnTop: true,
-        closeDuration: 300,
-    };
     toast[el.dataset.type](el.dataset.message);
 });
 
