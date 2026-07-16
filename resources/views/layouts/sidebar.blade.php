@@ -69,6 +69,38 @@
                         'master' => 'Master Data',
                         'system' => 'Systems',
                     ];
+
+                    // A menu is visible if the user has the permission set on
+                    // it (matches the checkboxes on the Role edit page).
+                    // Falls back to the old hardcoded roles list only if a
+                    // menu item has no permission configured.
+                    $canSeeMenu = function ($item) {
+                        $permission = $item->permission ?? null;
+                        if (!empty($permission)) {
+                            return auth()->user()->can($permission);
+                        }
+                        return auth()
+                            ->user()
+                            ->hasRole($item->roles ?? []);
+                    };
+
+                    // Parent items show if their own permission passes, or if
+                    // any of their sub-items would (e.g. "Logs" has no single
+                    // permission of its own, but should show when the user can
+                    // see either "System Logs" or "Audit Logs").
+                    $canSeeMenuOrSubs = function ($item) use ($canSeeMenu) {
+                        if ($canSeeMenu($item)) {
+                            return true;
+                        }
+                        if (!empty($item->sub) && is_array($item->sub)) {
+                            foreach ($item->sub as $sub) {
+                                if ($canSeeMenu($sub)) {
+                                    return true;
+                                }
+                            }
+                        }
+                        return false;
+                    };
                 @endphp
 
                 @foreach ($sectionOrder as $section)
@@ -76,7 +108,7 @@
                         @php
                             $hasVisibleItems = false;
                             foreach ($menus->$section as $menu) {
-                                if (auth()->user()->hasRole($menu->roles)) {
+                                if ($canSeeMenuOrSubs($menu)) {
                                     $hasVisibleItems = true;
                                     break;
                                 }
@@ -92,7 +124,7 @@
                             </div>
 
                             @foreach ($menus->$section as $menu)
-                                @if (auth()->user()->hasRole($menu->roles))
+                                @if ($canSeeMenuOrSubs($menu))
                                     @if (isset($menu->sub))
                                         <div class="menu-item {{ request()->routeIs($menu->path) || request()->routeIs($menu->path . '.*') ? 'show' : '' }}"
                                             data-menu-item-toggle="accordion" data-menu-item-trigger="click">
@@ -149,7 +181,7 @@
                                                 <div
                                                     class="menu-accordion gap-0.5 pl-[10px] relative before:absolute before:left-[20px] before:top-0 before:bottom-0 before:border-l before:border-gray-200">
                                                     @foreach ($menu->sub as $sub)
-                                                        @if (auth()->user()->hasRole($sub->roles))
+                                                        @if ($canSeeMenu($sub))
                                                             <div
                                                                 class="menu-item {{ request()->routeIs($sub->path . '.*') && in_array(request()->route()->getName(), [$sub->path . '.index', $sub->path . '.create', $sub->path . '.edit', $sub->path . '.restore']) ? 'active' : '' }}">
                                                                 <a class="menu-link gap-[14px] pl-[10px] pr-[10px] py-[8px] border border-transparent items-center grow menu-item-active:bg-secondary-active dark:menu-item-active:bg-coal-300 dark:menu-item-active:border-gray-100 menu-item-active:rounded-lg hover:bg-secondary-active dark:hover:bg-coal-300 dark:hover:border-gray-100 hover:rounded-lg"
