@@ -22,4 +22,3 @@ yarn-error.log
 /public/assets
 *.lock
 package-lock.json
-Modules
