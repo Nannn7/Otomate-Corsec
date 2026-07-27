@@ -425,6 +425,11 @@
                     <a href="{{ $card['route'] }}" class="btn btn-sm btn-light">
                         {{ $card['action'] }}
                     </a>
+                    @if (!empty($card['followup_route']))
+                        <a href="{{ $card['followup_route'] }}" class="btn btn-sm btn-warning">
+                            {{ $card['followup_action'] }}
+                        </a>
+                    @endif
                 @endforeach
             </div>
         </div>
@@ -456,9 +461,20 @@
                         {{ $fill }}% dari backlog tertinggi antar modul.
                     </div>
                 </div>
-                <a href="{{ $card['route'] }}" class="btn btn-sm btn-primary w-full">
-                    Lihat Detail
-                </a>
+                @if (!empty($card['followup_route']))
+                    <div class="flex gap-2">
+                        <a href="{{ $card['route'] }}" class="btn btn-sm btn-primary flex-1">
+                            Lihat Semua
+                        </a>
+                        <a href="{{ $card['followup_route'] }}" class="btn btn-sm btn-warning flex-1">
+                            {{ $card['followup_action'] }}
+                        </a>
+                    </div>
+                @else
+                    <a href="{{ $card['route'] }}" class="btn btn-sm btn-primary w-full">
+                        Lihat Detail
+                    </a>
+                @endif
             </article>
         @endforeach
     </section>
