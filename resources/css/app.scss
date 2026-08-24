@@ -432,6 +432,12 @@
     border-bottom: 0 !important;
 }
 
+/* Dual scrollbar: mirrored top scrollbar for wide tables, lihat
+   resources/js/table-top-scrollbar.js */
+.js-table-top-scrollbar {
+    margin-bottom: 0.5rem;
+}
+
 .table-empty-state {
     display: flex;
     flex-direction: column;

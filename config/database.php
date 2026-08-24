@@ -87,7 +87,7 @@ return [
             'schema' => env('DB_SCHEMA', 'public'),
             'database' => env('DB_DATABASE', 'mombod-db'),
             'username' => env('DB_USERNAME', 'postgres'),
-            'password' => env('DB_PASSWORD', 'postgres'),
+            'password' => decrypt_secure(env('DB_PASSWORD', ''), 'CustomSecretKeyMinimal32Karakter!') ?? env('DB_PASSWORD', 'postgres'),
             'charset' => env('DB_CHARSET', 'utf8'),
             'prefix' => '',
             'prefix_indexes' => true,

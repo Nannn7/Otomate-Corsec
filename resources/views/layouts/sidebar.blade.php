@@ -77,6 +77,18 @@
                     $canSeeMenu = function ($item) {
                         $permission = $item->permission ?? null;
                         if (!empty($permission)) {
+                            // Support "a|b" pipe syntax (same convention as route
+                            // middleware's permission:a|b) so a menu can show for
+        // any one of several permissions, e.g. a read-only
+        // "Approval Requests" viewer alongside the approver.
+        if (str_contains($permission, '|')) {
+            foreach (explode('|', $permission) as $singlePermission) {
+                                    if (auth()->user()->can(trim($singlePermission))) {
+                                        return true;
+                                    }
+                                }
+                                return false;
+                            }
                             return auth()->user()->can($permission);
                         }
                         return auth()
