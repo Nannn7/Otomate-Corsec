@@ -35,12 +35,13 @@ class EncryptionService
      */
     public function decrypt(string $payload): ?string
     {
+        if (empty($payload)) {
+            return null;
+        }
+
         try {
             return Crypt::decryptString($payload);
         } catch (DecryptException $e) {
-            Log::warning('EncryptionService: Gagal mendekripsi payload (data tidak valid atau telah dimodifikasi)', [
-                'error' => $e->getMessage(),
-            ]);
             return null;
         }
     }
@@ -84,6 +85,10 @@ class EncryptionService
      */
     public function decryptWithKey(string $payload, string $secretKey, ?string $cipher = null): ?string
     {
+        if (empty($payload)) {
+            return null;
+        }
+
         try {
             $cipher = $cipher ?? $this->defaultCipher;
             $key = $this->prepareKey($secretKey, $cipher);
@@ -91,9 +96,6 @@ class EncryptionService
 
             return $encrypter->decryptString($payload);
         } catch (DecryptException $e) {
-            Log::warning('EncryptionService: Gagal mendekripsi payload dengan custom key', [
-                'error' => $e->getMessage(),
-            ]);
             return null;
         }
     }
