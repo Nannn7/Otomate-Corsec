@@ -29,9 +29,9 @@ for (const p of paths) {
     input[key] = p;
 }
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
     build: {
-        sourcemap: true,
+        sourcemap: mode !== 'production',
         rollupOptions: {
             output: {
                 chunkFileNames: 'js/[name].js',
@@ -56,4 +56,4 @@ export default defineConfig({
             }
         }
     }
-});
+}));
