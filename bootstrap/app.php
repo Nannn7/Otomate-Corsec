@@ -13,6 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->appendToGroup('web', [
             \App\Http\Middleware\EnsureAuthenticatedUserHasRole::class,
+            \App\Http\Middleware\EnsureMustChangePassword::class,
         ]);
 
         $middleware->alias([

@@ -854,3 +854,4 @@
     }
 
     include __DIR__ . '/hmac.php';
+    include __DIR__ . '/encryption_helper.php';

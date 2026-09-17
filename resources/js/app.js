@@ -1,6 +1,7 @@
 import "./bootstrap";
 import "../metronic/core/index";
 import "../metronic/app/layouts/base.js";
+import "./table-top-scrollbar";
 import $ from "jquery";
 import Swal from "sweetalert2";
 import TomSelect from "tom-select";
